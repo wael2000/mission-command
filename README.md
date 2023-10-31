@@ -3,7 +3,7 @@
 
 
 oc label ns command-post argocd.argoproj.io/managed-by=user1-argocd
-oc label ns command-post argocd.argoproj.io/managed-by=demo-argocd
+oc label ns command-post argocd.argoproj.io/managed-by=demo-cicd --overwrite
 
 argocd.argoproj.io/managed-by: user1-argocd
 
