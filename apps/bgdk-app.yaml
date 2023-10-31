@@ -1,16 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: bgdk-app
+  name: battalion
+  namespace: user1-argocd
 spec:
   destination:
-    namespace: user$USERNUM-bgdk
+    namespace: command-post
     server: https://kubernetes.default.svc
   project: default
   source:
     path: apps/bgdk
     repoURL: https://github.com/wael2000/mission-command
-    targetRevision: master
+    targetRevision: main
   syncPolicy:
     automated:
       prune: true
