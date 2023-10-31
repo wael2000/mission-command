@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mission Command (Van het veld naar kantoor)</title>
+    <!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+    <!-- Styles -->
+    <link href="assets/css/lib/calendar2/pignose.calendar.min.css" rel="stylesheet">
+    <link href="assets/css/lib/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/css/lib/themify-icons.css" rel="stylesheet">
+    <link href="assets/css/lib/owl.carousel.min.css" rel="stylesheet" />
+    <link href="assets/css/lib/owl.theme.default.min.css" rel="stylesheet" />
+    <link href="assets/css/lib/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/lib/helper.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+
+<body ng-app="ParkingManagement" ng-controller="ParkingManagementController">
+
+    <div class="content-wrap">
+        <div class="container-fluid">
+            <div class="row ">
+                <div class="col-lg-12 header">
+                    <div class="float-left align-middle"> 
+                        <img class="pull-left m-r-10 logo-img" src="img/redhat.png" alt="" />
+                        <h5 class="pull-left">Mission Command (Van het veld naar kantoor)</h5> <br/>
+                        <!-- # alert -->
+                        <span class="alert alert-success hidden" id="success-alert">
+                            Transaction is successfuly done!
+                        </span>
+                        <span class="alert alert-error hidden" id="error-alert">
+                            Transactions can't be submitted 
+                        </span>
+                        <span class="alert alert-warning hidden" id="warning-alert">
+                            <strong id="warning-message"></strong>
+                        </span>
+                        <!-- /# alert -->
+                    </div>
+                    <div class="float-right">
+                        <div class="dropdown dib">
+                            <div class="header-icon" data-toggle="dropdown">
+                                <span class="user-avatar">{username}
+                                    <i class="ti-angle-down f-s-10"></i>
+                                </span>
+                                <div class="drop-down dropdown-profile dropdown-menu dropdown-menu-right">
+                                    <div class="dropdown-content-body">
+                                        <ul>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ti-user"></i>
+                                                    <span>Profile</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ti-email"></i>
+                                                    <span>Inbox</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ti-settings"></i>
+                                                    <span>Setting</span>
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="#">
+                                                    <i class="ti-power-off"></i>
+                                                    <span>Logout</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- main lots -->
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+  
+                <!-- # row  Search -->
+                <div class="row">
+                    <div class="col-lg-12 p-r-0 title-margin-right">
+                        <div class="page-header">
+                            <div class="page-title">
+                                    <h1>Hello {username}, <span>Use blow filters</span></h1>
+                            </div>
+                            <div class="button-list">
+                                <button type="button" class="btn btn-primary m-b-10 m-l-5" id="all" ng-click="filter()">All</button>
+                                <button type="button" class="btn btn-success m-b-10 m-l-5" id="available" ng-click="filter('Available')">Depoyed</button>
+                                <button type="button" class="btn btn-danger m-b-10 m-l-5" id="booked" ng-click="filter('Booked')">Mobile</button>
+                                <button type="button" class="btn btn-dark m-b-10 m-l-5" id="booked" ng-click="mine()">Dismounted</button>
+                                <input type="text" id="searchCriteria" placeholder="#/Name/Email/Team"/>
+                                <button type="button" class="btn btn-info m-b-10 m-l-5" id="booked" ng-click="search()">Search</button>
+                                <a href="#" ng-click="changeView('table')" class="btn btn-success ti-list m-b-10 m-l-5 pull-right" ></a>
+                                <a href="#" ng-click="changeView('grid')" class="btn btn-info ti-layout-grid3 m-b-10 m-l-5 pull-right"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /# row search -->
+                <section id="main-content">
+
+                    <!-- start table -->
+                    <div class="row" ng-if="view=='table'">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="bootstrap-data-table-panel">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr id="a">
+                                                <th id="action-column" style="width:100px"> Actions </th>
+                                                <th id="lot-column"> Name </th>
+                                                <th id="type-column"> Description  </th>
+                                                <th id="status-column"> Team  </th>
+                                                <th id="status-column"> Equipments  </th>
+                                                <th id="status-column"> Status  </th>
+                                                <th id="status-column"> Systems  </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="battalion in battalions"> 
+                                                <td ng-switch="(battalion.status)">
+                                                    <span ng-switch-when="static" class="deploy" ng-click="deploy(this)" battalion="{{ battalion }}">
+                                                        Deploy
+                                                    </span>
+                                                    <span ng-switch-when="deployed" class="mobile" ng-click="mobile(this)" battalion="{{ battalion }}">
+                                                        Mobile
+                                                    </span>
+                                                    <span ng-switch-when="mobile">
+                                                        <span class="dismount" ng-click="dismount(this)" battalion="{{ battalion }}">
+                                                            Dismount
+                                                        </span> <br/>
+                                                        <span class="deploy" ng-click="deploy(this)" battalion="{{ battalion }}">
+                                                            Re-Deploy
+                                                        </span>
+                                                    </span>
+                                                    <span ng-switch-when="dismounted" class="dismount" ng-click="mobile(this)" battalion="{{ battalion }}">
+                                                        Mount
+                                                    </span>
+                                                    
+                                                </td>                                                
+                                                <td>{{ battalion.name }} </td>
+                                                <td>{{ battalion.description }} </td>
+                                                <td>{{ battalion.members.length }} </td>
+                                                <td>
+                                                    <div class="equipment {{  key }}" ng-repeat="(key, value) in battalion.equipmentMap"> 
+                                                            {{  value }} 
+                                                    </div>
+                                                </td> 
+                                                <td>{{ battalion.status }} </td>
+                                                <td>
+                                                   <div>
+                                                    <span class="badge bg-primary fs-6"> {{ battalion.systemMode }} </span>
+                                                    <span ng-if="battalion.systemStatus=='on'" class="badge bg-success fs-6"> {{ battalion.systemStatus}} </span>
+                                                    <span ng-if="battalion.systemStatus=='off'" class="badge bg-danger fs-6"> {{ battalion.systemStatus}} </span>
+                                                    </div>
+                                                    
+                                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                                        <button type="button" class="btn btn-outline-danger btn-sm">Remove</button>
+                                                        <button type="button" class="btn btn-outline-warning btn-sm">Upgrade</button>
+                                                        <button type="button" class="btn btn-outline-success btn-sm">View</button>
+                                                    </div>  
+                                                    
+                                                </td> 
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end of table -->
+
+
+
+                    <!-- # row parking lot grid -->
+                    <div class="row" class="grid" ng-if="view=='grid'">                        
+                        <div class="col-lg-2 col-md-3 col-sm-3" ng-repeat="battalion in battalions" on-finish-render="callRenderFinished()" on-start-render="callRenderStarted()">
+                            <div class="card">
+                                <div class="stat-widget-one">
+                                    <div class="stat-icon dib">
+                                        <i ng-if="(battalion.status=='static')" class="ti-map-alt"></i>
+                                        <i ng-if="(battalion.status=='deployed')" class="ti-direction-alt"></i>
+                                        <i ng-if="(battalion.status=='mobile')" class="ti-target"></i>
+                                    </div>
+
+                                    <span class="float-md-right" ng-switch="(battalion.status)">
+                                        <div class="ti-user stat-digit badge"> {{ battalion.members.length }} </div>
+                                        <div ng-switch-when="static">
+                                            <i class="deploy float-md-right" ng-click="deploy(this)" battalion="{{ battalion }}">
+                                                Deploy
+                                            </i>
+                                        </div>
+                                        <div ng-switch-when="deployed">
+                                            <i class="mobile float-md-right" ng-click="mobile(this)" battalion="{{ battalion }}">
+                                                Mobile
+                                            </i>
+                                        </div>
+                                        <div ng-switch-when="mobile">
+                                            <i class="dismount float-md-right" ng-click="dismount(this)" battalion="{{ battalion }}">
+                                                Dismount
+                                            </i>
+                                            <i class="deploy float-md-right" ng-click="deploy(this)" battalion="{{ battalion }}">
+                                                Re-Deploy
+                                            </i>
+                                        </div>
+                                        <div ng-switch-when="dismounted">
+                                            <i class="dismount float-md-right" ng-click="mobile(this)" battalion="{{ battalion }}">
+                                                Mount
+                                            </i>
+                                        </div>
+                                    </span>
+                                   
+
+                                    <div class="stat-content dib">
+                                        <div class="stat-text">{{ battalion.name }} </div>
+                                        <div class="stat-digit">{{ battalion.description }} </div>                                                
+                                            <div class="stat-digit" ng-repeat="(key, value) in battalion.equipmentMap"> 
+                                                <div class="equipment {{  key }}">
+                                                    {{  value }} 
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="card">
+                                <div class="card-title"> 
+                                    
+                                    <span class="badge bg-primary fs-6"> {{ battalion.systemMode }} </span>
+                                    <span ng-if="battalion.systemStatus=='on'" class="badge bg-success fs-6"> {{ battalion.systemStatus}} </span>
+                                    <span ng-if="battalion.systemStatus=='off'" class="badge bg-danger fs-6"> {{ battalion.systemStatus}} </span>
+                                    
+                                    
+                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                        <button type="button" class="btn btn-outline-danger btn-sm">Remove</button>
+                                        <button type="button" class="btn btn-outline-warning btn-sm">Upgrade</button>
+                                        <button type="button" class="btn btn-outline-success btn-sm">View</button>
+                                    </div>  
+                                </div>
+                                <div>  
+                                    test
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                    <!-- /# row parking lot grid  -->
+
+                </section>
+            </div>
+            <!-- # row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="footer">
+                        <p>2023 © Red Hat EMEA. - <a href="#">www.redhat.com</a></p>
+                    </div>
+                </div>
+            </div>
+            <!-- /# row -->
+        
+            </div>
+        </div>
+    </div>
+
+      <!-- Modal Add Booking -->
+      <div class="modal fade none-border" id="add-booking">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">
+                <strong>Booking </strong>
+                <code>(Only for today)</code>
+              </h4>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div>
+                        <h2><span id="lot-name"></span></h4>
+                        <div class="card-content">
+                            <h5><i class="fa fa-check text-info"></i> will be booked from now untill you release it!</h5>
+                            <code>Please make sure you move your car before midnight!</code>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <input type="hidden" id="lot-id">
+              <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-danger waves-effect waves-light save-category" data-dismiss="modal" ng-click="submitBooking()">Book</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END MODAL Add Booking-->
+
+    <!-- Modal Release Parking Lot -->
+    <div class="modal fade none-border" id="release-lot">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">
+            <strong>Booking </strong>
+            <code>(Only for today)</code>
+            </h4>
+        </div>
+        <div class="modal-body">
+            <form>
+            <div class="row">
+                <div class="col-lg-12">
+                <div>
+                    <h2><span id="lot-name"></span></h4>
+                    <div class="card-content">
+                        <h5><i class="fa fa-check text-info"></i> will be booked from now untill you release it!</h5>
+                        <code>Please make sure you move your car before midnight!</code>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <input type="hidden" id="lot-id">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-danger waves-effect waves-light save-category" data-dismiss="modal" ng-click="release()">Book</button>
+        </div>
+        </div>
+    </div>
+    </div>
+    <!-- END MODAL Release Parking Lot -->
+
+    <!-- jquery vendor -->
+    <script src="assets/js/lib/jquery.min.js"></script>
+    <script src="assets/js/lib/jquery.nanoscroller.min.js"></script>
+    <!-- nano scroller -->
+    
+    <script src="assets/js/lib/bootstrap.min.js"></script>
+    <script src="assets/js/scripts.js"></script>
+    <!-- bootstrap -->
+
+    <script src="assets/js/lib/calendar-2/moment.latest.min.js"></script>
+    <script src="assets/js/lib/calendar-2/pignose.calendar.min.js"></script>
+    <script src="assets/js/lib/calendar-2/pignose.init.js"></script>
+
+
+    <script src="assets/js/lib/owl-carousel/owl.carousel.min.js"></script>
+    <script src="assets/js/lib/owl-carousel/owl.carousel-init.js"></script>
+
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/styles.css"/>
+    <link rel="stylesheet" href="css/amsify.select.css"/>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+
+    <!-- <script type="text/javascript" src="assets/js/fence.js"></script> -->
+    
+    <script type="text/javascript"> 
+        var distance;
+        var app = angular.module("ParkingManagement", []);
+
+        app.directive('onFinishRender', ['$timeout', '$parse', function ($timeout, $parse) {
+        return {
+            restrict: 'A',
+            link: function (scope, element, attr) {
+                if (scope.$last === true) {
+                    $timeout(function () {
+                        scope.$emit('ngRepeatFinished');
+                        if ( !! attr.onFinishRender) {
+                            $parse(attr.onFinishRender)(scope);
+                        }
+                    });
+                }
+                if (!!attr.onStartRender) {
+                    if (scope.$first === true) {
+                        $timeout(function () {
+                            scope.$emit('ngRepeatStarted');
+                            if ( !! attr.onStartRender) {
+                                $parse(attr.onStartRender)(scope);
+                            }
+                        });
+                    }
+                }
+            }
+        }
+        }]);
+
+        app.controller("ParkingManagementController", function ($scope, $http) {
+            $scope.battalions = [];
+            var global_mode = 1;
+            var global_parameter = "";
+            $scope.view = "table";
+            _refreshPageData(1);
+            function _refreshPageData(mode,parameter) {
+                global_mode = mode;
+                global_parameter = parameter;
+                var method = "";
+                var url = "";
+                var data = {};
+                method = "GET";
+                if(mode==1) {
+                    url = '{composite}/battalion' + (parameter?'/status/' + parameter:'');
+                } else if(mode==2) {
+                    url = '{composite}/battalion/email/{email}';
+                } else 
+                    url = '{composite}/battalion/search/' + parameter;
+
+                $http({
+                method: method,
+                url: url,
+                data: angular.toJson(data),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin' : '*'
+                }
+                }).then(function successCallback(response) {
+                $scope.battalions = response.data;
+                }, function errorCallback(response) {
+                console.log(response.statusText);
+                });
+            } 
+
+            $scope.callRenderFinished = function () {
+                //console.log('Method called by the directive, when finished rendering');
+            }
+            $scope.callRenderStarted = function () {
+                //console.log('Method2 called by the directive, when starting rendering');
+            }
+            $scope.$on('ngRepeatFinished', function (ngRepeatFinishedEvent) {
+                //console.log('Event captured in the controller, when finished rendering');
+            });
+            $scope.$on('ngRepeatStarted', function (ngRepeatStartedEvent) {
+                //console.log('Event captured in the controller, when started rendering');
+            });
+          
+            $scope.filter = function (status){
+                    _refreshPageData(1,status);   
+            } 
+
+            $scope.search = function(){
+                    _refreshPageData(0,$("#searchCriteria").val());
+            }
+
+            $scope.mine = function(){
+                    _refreshPageData(2)
+            }
+
+            $scope.book = function(lot){
+                if(lot.lot.status == "Available") {
+                    $("#lot-name").html(lot.lot.name);
+                    $("#lot-id").val(lot.lot.id);
+                    $('#add-booking').modal('show');
+                }
+            }
+
+            $scope.deploy = function(battalion){
+                var method = "POST";
+                var url = '{composite}/battalion/status';
+                var data = {  "id" : battalion.battalion.id, "status" : "deployed" } ;
+                $http({
+                method: method,
+                url: url,
+                data: angular.toJson(data),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin' : '*'
+                }
+                }).then(function successCallback(response) {
+                    $("#success-alert").show();
+                    $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+                        $("#success-alert").slideUp(500);
+                    });
+
+                    _refreshPageData(global_mode,global_parameter);
+                }, function errorCallback(response) {
+                
+                });
+            }
+
+            $scope.mobile = function(battalion){
+                var method = "POST";
+                var url = '{composite}/battalion/status';
+                var data = {  "id" : battalion.battalion.id, "status" : "mobile" } ;
+                $http({
+                method: method,
+                url: url,
+                data: angular.toJson(data),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin' : '*'
+                }
+                }).then(function successCallback(response) {
+                    $("#success-alert").show();
+                    $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+                        $("#success-alert").slideUp(500);
+                    });
+
+                    _refreshPageData(global_mode,global_parameter);
+                }, function errorCallback(response) {
+                
+                });
+            }
+
+            $scope.dismount = function(battalion){
+                var method = "POST";
+                var url = '{composite}/battalion/status';
+                var data = {  "id" : battalion.battalion.id, "status" : "dismounted" } ;
+                $http({
+                method: method,
+                url: url,
+                data: angular.toJson(data),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin' : '*'
+                }
+                }).then(function successCallback(response) {
+                    $("#success-alert").show();
+                    $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+                        $("#success-alert").slideUp(500);
+                    });
+
+                    _refreshPageData(global_mode,global_parameter);
+                }, function errorCallback(response) {
+                
+                });
+            }
+
+            $scope.submitBooking = function(){
+                var method = "POST";
+                var url = '{composite}/booking';
+                var lot =  $("#lot-name").html();
+                var lotId =  $("#lot-id").val();
+                var data = { "lot" : { "id" : lotId } , "employee" : { "email" : '{email}'}};
+                $http({
+                method: method,
+                url: url,
+                data: angular.toJson(data),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin' : '*'
+                }
+                }).then(function successCallback(response) {
+                    if(response.data.response) {
+                        $("#success-alert").show();
+                        $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+                            $("#success-alert").slideUp(500);
+                        });
+                        _refreshPageData(global_mode,global_parameter);
+                    } else {
+                        $("#warning-message").html(response.data.message);
+                        $("#warning-alert").show();
+                        $("#warning-alert").fadeTo(2000, 500).slideUp(500, function(){
+                            $("#warning-alert").slideUp(500);
+                        });
+                    }
+                }, function errorCallback(response) {
+                        $("#error-alert").show();
+                        $("#error-alert").fadeTo(2000, 500).slideUp(500, function(){
+                            $("#error-alert").slideUp(500);
+                        });
+                });
+            }
+
+            $scope.isMember = function(lot){
+            if(lot.team) {
+                for(index in lot.team.members){
+                    var member = lot.team.members[index];
+                    if(member.email=="{email}")
+                        return true;
+                }
+            } else 
+                return false;
+            }
+
+            $scope.changeView = function (currentView){
+                $scope.view = currentView;
+                console.log($scope.view);
+            }
+        });
+        
+      </script>
+   
+
+   
+
+    <script type="text/javascript"> 
+    $( document ).ready(function() {
+        
+    });     
+    </script>
+
+</body>
+</html>
