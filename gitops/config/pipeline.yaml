@@ -1,0 +1,258 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  creationTimestamp: '2023-10-30T19:58:15Z'
+  generation: 2
+  managedFields:
+    - apiVersion: tekton.dev/v1beta1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:spec':
+          .: {}
+          'f:finally': {}
+          'f:params': {}
+          'f:resources': {}
+          'f:results': {}
+          'f:tasks': {}
+          'f:workspaces': {}
+      manager: Mozilla
+      operation: Update
+      time: '2023-10-31T11:07:34Z'
+  name: secure-supply-chain-pipeline
+  namespace: command-post
+  resourceVersion: '1242407'
+  uid: 3fd48aa2-e620-47c4-87b2-703d89bcc0b8
+spec:
+  params:
+    - default: >-
+        http://gitea-demo-cicd.apps.cluster-bnq69.dynamic.opentlc.com/gitea/spring-petclinic
+      description: The application git repository
+      name: APP_SOURCE_GIT
+      type: string
+    - default: master
+      description: The application git revision
+      name: APP_SOURCE_REVISION
+      type: string
+    - default: >-
+        http://gitea-demo-cicd.apps.cluster-bnq69.dynamic.opentlc.com/gitea/spring-petclinic-config
+      description: The application manifests git repository
+      name: APP_MANIFESTS_GIT
+      type: string
+    - default: latest
+      description: The application image tag to build
+      name: APP_IMAGE_TAG
+      type: string
+  results:
+    - description: The image digest built in the pipeline
+      name: APP_IMAGE_DIGETST
+      value: $(tasks.build-image.results.IMAGE_DIGEST)
+    - description: The image url built in the pipeline
+      name: APP_IMAGE_URL
+      value: $(tasks.build-image.results.IMAGE_NAME)
+  tasks:
+    - name: source-clone
+      params:
+        - name: url
+          value: $(params.APP_SOURCE_GIT)
+        - name: revision
+          value: $(params.APP_SOURCE_REVISION)
+        - name: depth
+          value: '0'
+        - name: subdirectory
+          value: spring-petclinic
+        - name: deleteExisting
+          value: 'true'
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: workspace
+    - name: unit-tests
+      params:
+        - name: GOALS
+          value:
+            - package
+            - '-f'
+            - spring-petclinic
+      runAfter:
+        - source-clone
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      workspaces:
+        - name: source
+          workspace: workspace
+        - name: maven-settings
+          workspace: maven-settings
+    - name: code-analysis
+      params:
+        - name: GOALS
+          value:
+            - install
+            - 'sonar:sonar'
+            - '-f'
+            - spring-petclinic
+            - '-Dsonar.host.url=http://sonarqube:9000'
+            - '-Dsonar.userHome=/tmp/sonar'
+            - '-DskipTests=true'
+      runAfter:
+        - unit-tests
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      workspaces:
+        - name: source
+          workspace: workspace
+        - name: maven-settings
+          workspace: maven-settings
+    - name: security-scan
+      params:
+        - name: GOALS
+          value:
+            - '--version'
+            - '-f'
+            - spring-petclinic
+      runAfter:
+        - unit-tests
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      workspaces:
+        - name: source
+          workspace: workspace
+        - name: maven-settings
+          workspace: maven-settings
+    - name: release-app
+      params:
+        - name: GOALS
+          value:
+            - deploy
+            - '-f'
+            - spring-petclinic
+            - '-DskipTests=true'
+            - >-
+              -DaltDeploymentRepository=nexus::default::http://nexus:8081/repository/maven-releases/
+            - >-
+              -DaltSnapshotDeploymentRepository=nexus::default::http://nexus:8081/repository/maven-snapshots/
+      runAfter:
+        - code-analysis
+        - security-scan
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      workspaces:
+        - name: source
+          workspace: workspace
+        - name: maven-settings
+          workspace: maven-settings
+    - name: build-image
+      params:
+        - name: TLSVERIFY
+          value: 'false'
+        - name: MAVEN_MIRROR_URL
+          value: 'http://nexus:8081/repository/maven-public/'
+        - name: PATH_CONTEXT
+          value: spring-petclinic/target
+        - name: IMAGE_NAME
+          value: >-
+            image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/spring-petclinic
+        - name: IMAGE_TAG
+          value: $(params.APP_IMAGE_TAG)
+        - name: IMAGE
+          value: quay.io/wael2000/spring-petclinic
+      runAfter:
+        - release-app
+      taskRef:
+        kind: ClusterTask
+        name: s2i-java
+      workspaces:
+        - name: source
+          workspace: workspace
+        - name: dockerconfig
+          workspace: registry-secret
+    - name: update-deployment
+      params:
+        - name: GIT_REPOSITORY
+          value: $(params.APP_MANIFESTS_GIT)
+        - name: GIT_USERNAME
+          value: gitea
+        - name: GIT_PASSWORD
+          value: openshift
+        - name: CURRENT_IMAGE
+          value: 'quay.io/siamaksade/spring-petclinic:latest'
+        - name: NEW_IMAGE
+          value: 'quay.io/wael2000/spring-petclinic:latest'
+        - name: NEW_DIGEST
+          value: $(tasks.build-image.results.IMAGE_DIGEST)
+        - name: KUSTOMIZATION_PATH
+          value: environments/dev
+      runAfter:
+        - img-vuln-scan
+      taskRef:
+        kind: Task
+        name: git-update-deployment
+      workspaces:
+        - name: workspace
+          workspace: workspace
+    - name: create-promote-pr
+      params:
+        - name: GIT_REPOSITORY
+          value: $(params.APP_MANIFESTS_GIT)
+        - name: GIT_USERNAME
+          value: gitea
+        - name: GIT_PASSWORD
+          value: openshift
+        - name: COPY_FROM_PATH
+          value: environments/dev
+        - name: COPY_TO_PATH
+          value: environments/stage
+      runAfter:
+        - update-deployment
+      taskRef:
+        kind: Task
+        name: create-promote-pull-request
+      workspaces:
+        - name: workspace
+          workspace: workspace
+    - name: img-vuln-scan
+      params:
+        - name: srcImageURL
+          value: >-
+            docker://image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/spring-petclinic:$(params.APP_IMAGE_TAG)
+        - name: destImageURL
+          value: 'docker://quay.io/wael2000/spring-petclinic:$(params.APP_IMAGE_TAG)'
+        - name: srcTLSverify
+          value: 'false'
+        - name: destTLSverify
+          value: 'false'
+      runAfter:
+        - build-image
+      taskRef:
+        kind: ClusterTask
+        name: skopeo-copy
+      workspaces:
+        - name: images-url
+          workspace: registry-secret
+    - name: send-to-channel-slack
+      params:
+        - name: token-secret
+          value: slack-token-secret
+        - name: channel
+          value: gitops-demo
+        - name: message
+          value: 'Petclinic ver $(params.APP_IMAGE_TAG) is successfully deployed '
+      runAfter:
+        - create-promote-pr
+      taskRef:
+        kind: Task
+        name: send-to-channel-slack
+  workspaces:
+    - name: workspace
+      optional: false
+    - name: maven-settings
+      optional: false
+    - name: registry-secret
+      optional: false
+  resources: []
+  finally: []

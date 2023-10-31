@@ -8,8 +8,8 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: documentation/modules/ROOT/examples/bgd
-    repoURL: https://github.com/openshiftdemos/openshift-gitops-workshop
+    path: adds/bgd
+    repoURL: https://github.com/wael2000/mission-command
     targetRevision: master
   syncPolicy:
     automated:
