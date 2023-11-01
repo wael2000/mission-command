@@ -14,7 +14,7 @@ spec:
   template:
     metadata:
       labels:
-        app: bgd
+        app: battalion
     spec:
       containers:
       - image: quay.io/rhdevelopers/bgd:1.0.0
