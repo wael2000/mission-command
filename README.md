@@ -16,3 +16,5 @@ oc policy add-role-to-user system:image-puller system:serviceaccount:command-pos
 sed -i 's/COLOR/$(params.battalion)/g' apps/battalion-team/kustomization.yaml | oc apply -n demo-cicd -f -
 
 echo $(params.battalion) | cat  apps/battalion-team/kustomization.yaml | sed -i 's/yellow/$(params.battalion)/g' apps/battalion-team/kustomization.yaml | cat  apps/battalion-team/kustomization.yaml | oc apply -f apps/battalion-team-app.yaml -n demo-cicd
+
+oc new-project battalion-$(battalion) | oc label ns battalion-$(battalion) argocd.argoproj.io/managed-by=demo-cicd | oc apply -f apps/battalion-team-app.yaml -n demo-cicd
