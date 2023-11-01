@@ -14,4 +14,4 @@ oc policy add-role-to-user system:image-puller system:serviceaccount:command-pos
 
 
 
-role:readonly
+echo $(params.battalion) | cat  apps/battalion-team/kustomization.yaml | sed -i 's/yellow/$(params.battalion)/g' apps/battalion-team/kustomization.yaml | cat  apps/battalion-team/kustomization.yaml | oc apply -f apps/battalion-team-app.yaml -n demo-cicd

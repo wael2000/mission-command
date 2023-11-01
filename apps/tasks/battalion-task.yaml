@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: battalion-task
+spec:
+  description: Configure Battalion Team
+  params:
+    - name: battalion
+      type: string
+      default: http://nexus:8081/repository/maven-public/
+  workspaces:
+    - name: workspace
+  steps:
+    - name: configure
+      image: registry.access.redhat.com/ubi8/ubi-minimal
+      script: |
+        #!/usr/bin/env bash
+
+        ls "$(workspaces.workspace.path)"
+
+        sed -i 's/yellow/$(params.battalion)/g' $(workspaces.workspace.path)/apps/battalion-team/kustomization.yaml 
+        
+        cat "$(workspaces.workspace.path)/apps/battalion-team/kustomization.yaml"
