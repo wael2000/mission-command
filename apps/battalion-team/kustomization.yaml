@@ -6,10 +6,10 @@ patches:
 - patch: |-
     - op: replace
       path: /spec/template/spec/containers/0/env/0/value
-      value: ${battalion}
+      value: $(battalion)
     - op: replace
       path: /metadata/name
-      value: ${battalion}-battalion
+      value: $(battalion)-battalion
   target:
     group: apps
     kind: Deployment
