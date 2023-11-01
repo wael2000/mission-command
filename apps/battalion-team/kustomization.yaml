@@ -7,6 +7,9 @@ patches:
     - op: replace
       path: /spec/template/spec/containers/0/env/0/value
       value: yellow
+    - op: replace
+      path: /metadata/name
+      value: yellow-battalion
   target:
     group: apps
     kind: Deployment
