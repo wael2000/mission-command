@@ -10,5 +10,5 @@ patches:
   target:
     group: apps
     kind: Deployment
-    name: bgd
+    name: battalion
     version: v1
