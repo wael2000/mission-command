@@ -3,7 +3,7 @@ apiVersion: project.openshift.io/v1
 metadata:
   name: battalion-blue
   labels:
-    argocd.argoproj.io/managed-by: demo-cicd
+    argocd.argoproj.io/managed-by: mod-cicd
 spec:
   finalizers:
     - kubernetes
