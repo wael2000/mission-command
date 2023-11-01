@@ -21,4 +21,4 @@ oc new-project battalion-$(params.battalion) | oc label ns battalion-$(params.ba
 
 
 
-oc adm polsystem:serviceaccount:mod-cicd:argocd-argocd-application-controller
+oc adm polci system:serviceaccount:mod-cicd:argocd-argocd-application-controller
