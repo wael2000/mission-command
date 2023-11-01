@@ -18,6 +18,11 @@ spec:
 
         ls "$(workspaces.workspace.path)"
 
-        sed -i 's/yellow/$(params.battalion)/g' $(workspaces.workspace.path)/apps/battalion-team/kustomization.yaml 
+        sed -i 's/BATTALION_NAME/$(params.battalion)/g' $(workspaces.workspace.path)/apps/battalion-team/battalion-deployment.yaml 
+        sed -i 's/COLOR_NAME/$(params.color)/g' $(workspaces.workspace.path)/apps/battalion-team/battalion-deployment.yaml 
+        sed -i 's/BATTALION_NAME/$(params.battalion)/g' $(workspaces.workspace.path)/apps/battalion-team/battalion-route.yaml 
+        sed -i 's/BATTALION_NAME/$(params.battalion)/g' $(workspaces.workspace.path)/apps/battalion-team/battalion-svc.yaml 
+
         
-        cat "$(workspaces.workspace.path)/apps/battalion-team/kustomization.yaml"
+        cat "$(workspaces.workspace.path)/apps/battalion-team/battalion-deployment.yaml"
+        cat "$(workspaces.workspace.path)/apps/battalion-team/battalion-svc.yaml"
