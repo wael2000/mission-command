@@ -1,8 +1,8 @@
-insert into Battalion (id,name,description,status,systemStatus,systemMode) values (1,'Fox Team','Corp1-Div2-Brigade19-Bat01','static','off','manual');
-insert into Battalion (id,name,description,status,systemStatus,systemMode) values (2,'Hauk Team','Corp1-Div2-Brigade19-Bat02','static','off','auto');
-insert into Battalion (id,name,description,status,systemStatus,systemMode) values (3,'Delta Team','Corp1-Div2-Brigade19-Bat03','static','off','auto');
-insert into Battalion (id,name,description,status,systemStatus,systemMode) values (4,'Mes Team','Corp1-Div2-Brigade19-Bat04','static','off','auto');
-insert into Battalion (id,name,description,status,systemStatus,systemMode) values (5,'Zwarte Team','Corp1-Div2-Brigade19-Bat05','static','off','auto');
+insert into Battalion (id,name,description,status,systemStatus,systemMode) values (1,'Fox Team','fox-team','static','off','auto');
+insert into Battalion (id,name,description,status,systemStatus,systemMode) values (2,'Hauk Team','hauk-team','static','off','auto');
+insert into Battalion (id,name,description,status,systemStatus,systemMode) values (3,'Delta Team','delta-team','static','off','manual');
+insert into Battalion (id,name,description,status,systemStatus,systemMode) values (4,'Mes Team','mes-team','static','off','auto');
+insert into Battalion (id,name,description,status,systemStatus,systemMode) values (5,'Zwarte Team','zwarte-team','static','off','auto');
 
 insert into Member (id,name,rank,email,team_id) values (1,'Col-01','lieutenant colonel','Col-01@mail.com',1);
 insert into Member (id,name,rank,email,team_id) values (2,'Cap-02','captain','Cap-02@mail.com',1);
