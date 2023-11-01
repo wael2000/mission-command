@@ -3,13 +3,13 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: battalion
-  name: battalion
+    app: $(params.battalion)
+  name: $(params.battalion)
 spec:
   ports:
   - port: 8080
     protocol: TCP
     targetPort: 8080
   selector:
-    app: battalion
+    app: $(params.battalion)
 ---

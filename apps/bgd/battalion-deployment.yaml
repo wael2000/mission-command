@@ -4,21 +4,21 @@ kind: Deployment
 metadata:
   labels:
     app: battalion
-  name: battalion
+  name: $(params.battalion)
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: battalion
+      app: $(params.battalion)
   strategy: {}
   template:
     metadata:
       labels:
-        app: battalion
+        app: $(params.battalion)
     spec:
       containers:
       - image: quay.io/rhdevelopers/bgd:1.0.0
-        name: bgd
+        name: $(params.battalion)
         env:
         - name: COLOR
           value: "blue"

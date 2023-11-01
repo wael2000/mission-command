@@ -2,12 +2,12 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   labels:
-    app: battalion
-  name: battalion
+    app: $(params.battalion)
+  name: $(params.battalion)
 spec:
   port:
     targetPort: 8080
   to:
     kind: Service
-    name: battalion
+    name: $(params.battalion)
     weight: 100
