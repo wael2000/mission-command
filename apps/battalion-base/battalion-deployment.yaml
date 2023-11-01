@@ -3,13 +3,13 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: bgd
-  name: bgd
+    app: battalion
+  name: battalion
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: bgd
+      app: battalion
   strategy: {}
   template:
     metadata:
@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - image: quay.io/rhdevelopers/bgd:1.0.0
-        name: bgd
+        name: battalion
         env:
         - name: COLOR
           value: "blue"
