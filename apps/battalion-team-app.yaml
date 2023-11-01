@@ -12,6 +12,8 @@ spec:
     repoURL: https://github.com/wael2000/mission-command
     targetRevision: main
   syncPolicy:
+    syncOptions:
+    - CreateNamespace: true
     automated:
       prune: true
       selfHeal: false

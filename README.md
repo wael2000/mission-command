@@ -20,3 +20,5 @@ echo $(params.battalion) | cat  apps/battalion-team/kustomization.yaml | sed -i 
 oc new-project battalion-$(params.battalion) | oc label ns battalion-$(params.battalion) argocd.argoproj.io/managed-by=demo-cicd | oc apply -f apps/battalion-team-app.yaml -n demo-cicd
 
 
+
+oc adm polsystem:serviceaccount:mod-cicd:argocd-argocd-application-controller
