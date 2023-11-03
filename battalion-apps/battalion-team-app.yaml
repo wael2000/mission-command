@@ -4,7 +4,7 @@ metadata:
   name: battalion
 spec:
   destination:
-    namespace: demo-cicd
+    namespace: command-post
     server: https://kubernetes.default.svc
   project: default
   source:
