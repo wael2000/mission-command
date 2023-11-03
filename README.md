@@ -22,6 +22,9 @@ oc new-project battalion-$(params.battalion) | oc label ns battalion-$(params.ba
 
 oc label ns battalion-$(params.battalion) argocd.argoproj.io/managed-by=demo-cicd
 
+
+oc label ns command-post argocd.argoproj.io/managed-by=demo-cicd
+
 oc adm polci system:serviceaccount:mod-cicd:argocd-argocd-application-controller
 
 oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:demo-cicd:pipeline 
