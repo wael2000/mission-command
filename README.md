@@ -1,58 +1,35 @@
 # mission-command
 
+1 - allow ArgoCD to create apps 
+# create ocp-admins group
+oc adm groups new ocp-admins
 
+# give cluster admin rightsto ocp-admins group
+oc adm policy add-cluster-role-to-group cluster-admin ocp-admins
 
-oc label ns command-post argocd.argoproj.io/managed-by=user1-argocd
+# add username to ocp-admins group
+oc adm groups add-users ocp-admins USERNAME
+
+2 - label projects that need to be managed by argoCD
+
+# add label to the ns refer to ArgoCD ns
 oc label ns command-post argocd.argoproj.io/managed-by=mod-cicd --overwrite
 
-argocd.argoproj.io/managed-by: user1-argocd
+3 - lift pipeline permission up 
+# create a new cluster role 
 
-oc policy add-role-to-user edit system:serviceaccount:demo-cicd:pipeline -n command-post
-oc policy add-role-to-user system:image-puller system:serviceaccount:command-post:default -n demo-cicd
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: namespaces-manager
+rules:
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["get", "watch", "list", "create", "update", "patch", "delete"]
 
- 
-| oc apply -f apps/battalion-team-app.yaml -n mod-cicd
-
-
-sed -i 's/BATTALION/$(params.battalion)/g' battalion-apps/battalion-team-app.yaml | oc apply -n demo-cicd -f -
-
-
-sed -i 's/BATTALION/$(params.battalion)/g' battalion-apps/battalion-team-app.yaml | oc create -f - -n demo-cicd 
-
-
-
-echo $(params.battalion) | cat  apps/battalion-team/kustomization.yaml | sed -i 's/yellow/$(params.battalion)/g' apps/battalion-team/kustomization.yaml | cat  apps/battalion-team/kustomization.yaml | oc apply -f apps/battalion-team-app.yaml -n demo-cicd
-
-oc new-project battalion-$(params.battalion) | oc label ns battalion-$(params.battalion) argocd.argoproj.io/managed-by=demo-cicd | oc apply -f battalion-apps/battalion-team-app.yaml -n demo-cicd
-
-
-oc label ns battalion-$(params.battalion) argocd.argoproj.io/managed-by=demo-cicd
-
-
-oc label ns command-post argocd.argoproj.io/managed-by=demo-cicd
-
-oc adm polci system:serviceaccount:mod-cicd:argocd-argocd-application-controller
-
-oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:demo-cicd:pipeline 
-
-
-oc policy add-cluster-role-to-user self-provisioner -z gitlab-sa
-
-
-
-oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:command-post:pipeline
-
-oc adm policy add-cluster-role-to-user cluster-reader system:serviceaccount:command-post:pipeline
+# add pipeline service account of the project where the pipeline runs to this role 
 
 oc adm policy add-cluster-role-to-user namespaces-manager system:serviceaccount:command-post:pipeline
 
-
-oc create clusterrole test --verb=create --resource=namespace --dry-run
-
-oc policy add-role-to-user edit system:serviceaccount:command-post:pipeline -n demo-cicd
-
-
-oc new-project battalion-$(params.battalion) 
-
-
-sed -i 's/TARGET_NAMESPACE/$(params.battalion)/g' apps/battalion-team-app.yaml | oc apply -n demo-cicd -f -
+# add cluster-reader role
+oc adm policy add-cluster-role-to-user cluster-reader system:serviceaccount:command-post:pipeline
