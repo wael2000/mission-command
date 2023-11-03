@@ -4,7 +4,7 @@ metadata:
   name: battalion
 spec:
   destination:
-    namespace: TARGET_NAMESPACE
+    namespace: command-post
     server: https://kubernetes.default.svc
   project: default
   source:

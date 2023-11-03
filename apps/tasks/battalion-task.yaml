@@ -8,9 +8,6 @@ spec:
     - name: battalion
       type: string
       default: fox
-    - name: color
-      type: string
-      default: blue      
   workspaces:
     - name: workspace
   steps:
@@ -19,13 +16,8 @@ spec:
       script: |
         #!/usr/bin/env bash
 
-        ls "$(workspaces.workspace.path)"
-
-        sed -i 's/BATTALION_NAME/$(params.battalion)/g' $(workspaces.workspace.path)/apps/battalion-team/battalion-deployment.yaml 
-        sed -i 's/COLOR_NAME/$(params.color)/g' $(workspaces.workspace.path)/apps/battalion-team/battalion-deployment.yaml 
-        sed -i 's/BATTALION_NAME/$(params.battalion)/g' $(workspaces.workspace.path)/apps/battalion-team/battalion-route.yaml 
-        sed -i 's/BATTALION_NAME/$(params.battalion)/g' $(workspaces.workspace.path)/apps/battalion-team/battalion-svc.yaml 
-
+        ls $(workspaces.workspace.path)
         
-        cat "$(workspaces.workspace.path)/apps/battalion-team/battalion-deployment.yaml"
-        cat "$(workspaces.workspace.path)/apps/battalion-team/battalion-svc.yaml"
+        sed -i 's/TARGET_NAMESPACE/$(params.battalion)/g' apps/battalion-team-app.yaml
+
+        cat "apps/battalion-team-app.yaml"
