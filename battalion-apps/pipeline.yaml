@@ -1,7 +1,26 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: deploy-battalion
+  creationTimestamp: '2023-11-02T21:13:06Z'
+  generation: 13
+  managedFields:
+    - apiVersion: tekton.dev/v1beta1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:spec':
+          .: {}
+          'f:finally': {}
+          'f:params': {}
+          'f:resources': {}
+          'f:tasks': {}
+          'f:workspaces': {}
+      manager: Mozilla
+      operation: Update
+      time: '2023-11-03T02:04:31Z'
+  name: battalion-pipeline
+  namespace: command-post
+  resourceVersion: '535922'
+  uid: d889670a-5a3f-4881-845c-399043ac7233
 spec:
   params:
     - default: blue
@@ -13,6 +32,10 @@ spec:
       params:
         - name: url
           value: 'https://github.com/wael2000/mission-command'
+        - name: revision
+          value: main
+        - name: refspec
+          value: ''
         - name: submodules
           value: 'true'
         - name: depth
@@ -21,8 +44,18 @@ spec:
           value: 'true'
         - name: crtFileName
           value: ca-bundle.crt
+        - name: subdirectory
+          value: ''
+        - name: sparseCheckoutDirectories
+          value: ''
         - name: deleteExisting
           value: 'true'
+        - name: httpProxy
+          value: ''
+        - name: httpsProxy
+          value: ''
+        - name: noProxy
+          value: ''
         - name: verbose
           value: 'true'
         - name: gitInitImage
@@ -30,8 +63,6 @@ spec:
             registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:9b14f52b21d29d8d83ea4c0e78623debc954f1a732d2be6d1a7269fbba23b1a4
         - name: userHome
           value: /home/git
-        - name: revision
-          value: ''
       taskRef:
         kind: ClusterTask
         name: git-clone
@@ -41,15 +72,41 @@ spec:
     - name: openshift-client
       params:
         - name: SCRIPT
-          value: >-
-            oc new-project battalion-$(params.battalion) | oc label ns
-            battalion-$(params.battalion)
-            argocd.argoproj.io/managed-by=demo-cicd | oc apply -f
-            apps/battalion-team-app.yaml -n demo-cicd
+          value: 'oc new-project battalion-$(params.battalion) '
         - name: VERSION
           value: latest
       runAfter:
         - git-clone
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+    - name: openshift-client-kzp
+      params:
+        - name: SCRIPT
+          value: >-
+            oc label ns battalion-$(params.battalion)
+            argocd.argoproj.io/managed-by=demo-cicd 
+        - name: VERSION
+          value: latest
+      runAfter:
+        - openshift-client
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      workspaces:
+        - name: manifest-dir
+          workspace: source
+    - name: openshift-client-yu3
+      params:
+        - name: SCRIPT
+          value: >-
+            sed 's/BATTALION/$(params.battalion)/g'
+            battalion-apps/battalion-team-app.yaml | oc create -f - -n
+            demo-cicd 
+        - name: VERSION
+          value: latest
+      runAfter:
+        - openshift-client-kzp
       taskRef:
         kind: ClusterTask
         name: openshift-client
