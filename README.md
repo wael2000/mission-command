@@ -17,7 +17,7 @@ sed -i 's/TARGET_NAMESPACE/$(params.battalion)/g' apps/battalion-team-app.yaml |
 
 echo $(params.battalion) | cat  apps/battalion-team/kustomization.yaml | sed -i 's/yellow/$(params.battalion)/g' apps/battalion-team/kustomization.yaml | cat  apps/battalion-team/kustomization.yaml | oc apply -f apps/battalion-team-app.yaml -n demo-cicd
 
-oc new-project battalion-$(params.battalion) | oc label ns battalion-$(params.battalion) argocd.argoproj.io/managed-by=demo-cicd | oc apply -f apps/battalion-team-app.yaml -n demo-cicd
+oc new-project battalion-$(params.battalion) | oc label ns battalion-$(params.battalion) argocd.argoproj.io/managed-by=demo-cicd | oc apply -f battalion-apps/battalion-team-app.yaml -n demo-cicd
 
 
 oc label ns battalion-$(params.battalion) argocd.argoproj.io/managed-by=demo-cicd

@@ -8,7 +8,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: apps/battalion-team
+    path: battalion-apps/battalion-team
     repoURL: https://github.com/wael2000/mission-command
     targetRevision: main
   syncPolicy:
