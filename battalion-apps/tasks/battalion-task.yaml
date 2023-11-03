@@ -18,6 +18,19 @@ spec:
 
         ls $(workspaces.workspace.path)
         
+        echo "------------"
+
+        echo "$(workspaces.workspace.path)/apps"
+
+        echo "--------------"
+
+        ls
+
+        echo "--------------"
+
+        ls . -name "battalion-team-app.yaml"
+
+
         sed -i 's/TARGET_NAMESPACE/$(params.battalion)/g' apps/battalion-team-app.yaml
 
         cat "apps/battalion-team-app.yaml"
