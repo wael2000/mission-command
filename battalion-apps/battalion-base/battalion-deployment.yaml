@@ -6,7 +6,7 @@ metadata:
     app: battalion
   name: battalion
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: battalion
