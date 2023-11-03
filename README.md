@@ -13,7 +13,13 @@ oc policy add-role-to-user system:image-puller system:serviceaccount:command-pos
  
 | oc apply -f apps/battalion-team-app.yaml -n mod-cicd
 
-sed -i 's/TARGET_NAMESPACE/$(params.battalion)/g' apps/battalion-team-app.yaml | oc apply -n demo-cicd -f -
+
+sed -i 's/BATTALION/$(params.battalion)/g' battalion-apps/battalion-team-app.yaml | oc apply -n demo-cicd -f -
+
+
+sed -i 's/BATTALION/$(params.battalion)/g' battalion-apps/battalion-team-app.yaml | oc create -f - -n demo-cicd 
+
+
 
 echo $(params.battalion) | cat  apps/battalion-team/kustomization.yaml | sed -i 's/yellow/$(params.battalion)/g' apps/battalion-team/kustomization.yaml | cat  apps/battalion-team/kustomization.yaml | oc apply -f apps/battalion-team-app.yaml -n demo-cicd
 

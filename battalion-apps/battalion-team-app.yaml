@@ -4,7 +4,7 @@ metadata:
   name: battalion
 spec:
   destination:
-    namespace: BATTALION
+    namespace: battalion-BATTALION
     server: https://kubernetes.default.svc
   project: default
   source:
