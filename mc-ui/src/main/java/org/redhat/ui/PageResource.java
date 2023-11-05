@@ -25,7 +25,7 @@ public class PageResource {
     Template list;
     
     
-    @ConfigProperty(name = "parkingService.url")
+    @ConfigProperty(name = "battalionService.url")
     String compositeURL;
 
     @GET

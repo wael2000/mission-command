@@ -1,13 +1,15 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: battalion-task
+  name: battalion-notification-task
 spec:
-  description: Configure Battalion Team
+  description: Send status to Battalion backend
   params:
     - name: battalion
       type: string
       default: fox
+    - name: battalion_url
+      type: string
   workspaces:
     - name: workspace
   steps:
@@ -16,7 +18,4 @@ spec:
       script: |
         #!/usr/bin/env bash
 
-        curl 
-        #sed -i 's/TARGET_NAMESPACE/$(params.battalion)/g' apps/battalion-team-app.yaml
-
-        #cat "apps/battalion-team-app.yaml"
+        curl -XPOST -d '{"battalion","$(params.battalion)"}' $(params.battalion_url)

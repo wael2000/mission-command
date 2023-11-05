@@ -1,0 +1,31 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: pattalion-trigger-template
+spec:
+  params:
+    - description: battalion
+      name: battalion
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: battalion-pipeline-$(tt.params.battalion)-
+      spec:
+        params:
+          - name: battalion
+            value: $(tt.params.battalion)
+        pipelineRef:
+          name: battalion-pipeline
+        serviceAccountName: pipeline
+        workspaces:
+          - name: source
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 128Mi
+                storageClassName: ocs-external-storagecluster-ceph-rbd
+                volumeMode: Filesystem

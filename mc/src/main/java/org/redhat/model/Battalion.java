@@ -19,6 +19,11 @@ import java.util.HashMap;
 @NamedQuery(name = "Battalion.findByStatus", query = "SELECT b FROM Battalion b where status=:status", hints = @QueryHint(name = "org.hibernate.cacheable", value = "true"))
 @Cacheable
 public class Battalion extends PanacheEntity {
+    public static String STATIC = "static";
+    public static String DEPLOYED = "deployed";
+    public static String MOBILE = "mobile";
+    public static String DISMOUNT = "dismount";
+
     private String name;
     private String description;
     private String status;  // static, deployed, mobile. dismount

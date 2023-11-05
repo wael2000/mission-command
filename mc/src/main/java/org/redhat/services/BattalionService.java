@@ -2,11 +2,14 @@ package org.redhat.services;
 
 
 
+import java.util.Map;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.redhat.model.Battalion;
 import org.redhat.model.Equipment;
 
@@ -14,6 +17,10 @@ import org.redhat.model.Equipment;
 public class BattalionService {
     @Inject
     EntityManager em; 
+
+    @Inject
+    @RestClient
+    PipelineProxyService pipelineProxyService;
 
     public Battalion[] getAll(){
         return em.createNamedQuery("Battalion.findAll", Battalion.class)
