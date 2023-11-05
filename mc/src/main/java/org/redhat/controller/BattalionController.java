@@ -60,6 +60,13 @@ public class BattalionController {
         }
         return bat;
     }
+
+    @POST
+    @Path("/system")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Battalion setSystemMode(Battalion battalion) {
+        return service.setSystemStatus(battalion);
+    }
     
 
 }   

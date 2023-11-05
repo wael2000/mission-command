@@ -38,6 +38,14 @@ public class BattalionService {
         return bat;
     }
 
+    @Transactional 
+    public Battalion setSystemStatus(Battalion battalion){
+        Battalion bat = Battalion.findById(battalion.id);
+        bat.setSystemStatus(battalion.getSystemStatus());
+        em.persist(bat);
+        return bat;
+    }
+
     public Battalion[] getByStatus(String status){
         return em.createNamedQuery("Battalion.findByStatus", Battalion.class)
                 .setParameter("status",status)
