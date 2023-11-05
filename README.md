@@ -33,3 +33,11 @@ oc adm policy add-cluster-role-to-user namespaces-manager system:serviceaccount:
 
 # add cluster-reader role
 oc adm policy add-cluster-role-to-user cluster-reader system:serviceaccount:command-post:pipeline
+
+
+
+
+curl -XPOST -k -d '{"id" : "1", "systemStatus" : "on"}' https://mission-command-service-command-post.apps.cluster-fdbd4.dynamic.opentlc.com/battalion/system  -H 'Content-Type: application/json' -v
+
+
+curl -XPOST -k -d '{"id" : "1", "systemStatus" : "off"}' https://mission-command-service-command-post.apps.cluster-fdbd4.dynamic.opentlc.com/battalion/system  -H 'Content-Type: application/json' -v

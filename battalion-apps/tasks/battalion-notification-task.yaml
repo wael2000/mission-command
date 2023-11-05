@@ -23,4 +23,4 @@ spec:
       script: |
         #!/usr/bin/env bash
 
-        curl -XPOST -d '{"id","$(params.battalion_id)", "systemStatus" : "$(params.system)"}' $(params.battalion_url)
+        curl -XPOST -d '{"id","$(params.battalion_id)", "systemStatus" : "$(params.system)"}' $(params.battalion_url)  -H "Accept: application/json" 
