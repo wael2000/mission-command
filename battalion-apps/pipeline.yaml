@@ -1,31 +1,16 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  creationTimestamp: '2023-11-02T21:13:06Z'
-  generation: 13
-  managedFields:
-    - apiVersion: tekton.dev/v1beta1
-      fieldsType: FieldsV1
-      fieldsV1:
-        'f:spec':
-          .: {}
-          'f:finally': {}
-          'f:params': {}
-          'f:resources': {}
-          'f:tasks': {}
-          'f:workspaces': {}
-      manager: Mozilla
-      operation: Update
-      time: '2023-11-03T02:04:31Z'
   name: battalion-pipeline
-  namespace: command-post
-  resourceVersion: '535922'
-  uid: d889670a-5a3f-4881-845c-399043ac7233
 spec:
   params:
     - default: blue
       description: battalion name
       name: battalion
+      type: string
+    - default: '0'
+      description: battalion id
+      name: battalion_id
       type: string
   tasks:
     - name: git-clone

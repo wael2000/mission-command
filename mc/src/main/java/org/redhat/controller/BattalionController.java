@@ -52,11 +52,10 @@ public class BattalionController {
         Battalion bat = service.setStatus(battalion);
         // trigger the pipeline
         if(Battalion.DEPLOYED.equals( bat.getStatus())){
-            System.out.println(pipelineProxyService);
             Map<String,String> payload = new HashMap<>();
             payload.put("battalion",bat.getDescription());
-            Object result = pipelineProxyService.deploy(payload);
-            System.out.println(result);
+            payload.put("battalion_id",bat.id.toString());
+            pipelineProxyService.deploy(payload);
         }
         return bat;
     }
