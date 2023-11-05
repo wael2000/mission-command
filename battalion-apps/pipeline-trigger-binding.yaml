@@ -6,3 +6,5 @@ spec:
   params:
     - name: battalion
       value: $(body.battalion)
+    - name: battalion_id
+      value: $(body.battalion_id)  
