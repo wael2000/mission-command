@@ -2,7 +2,9 @@ package org.redhat.services;
 
 
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -51,4 +53,17 @@ public class BattalionService {
                 .setParameter("status",status)
                 .getResultList().toArray(new Battalion[0]);
     }
+
+    public Map<Long, String> findSystemStatusByIds(Set<Long> ids){
+        Map<Long, String> systems = new HashMap<>();
+        Battalion[] battalions = em.createNamedQuery("Battalion.findSystemStatusByIds", Battalion.class)
+                .setParameter("ids",ids)
+                .getResultList().toArray(new Battalion[0]);
+        for (int i = 0; i < battalions.length; i++) {
+            systems.put(battalions[i].id,battalions[i].getSystemStatus());
+        }
+        return systems ;
+    }
+
+    
 }

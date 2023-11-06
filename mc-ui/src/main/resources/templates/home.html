@@ -171,11 +171,10 @@
                                                     </div>
                                                 </td> 
                                                 <td>{{ battalion.status }} </td>
-                                                <td>
-                                                   <div>
-                                                    <span class="badge bg-primary fs-6"> {{ battalion.systemMode }} </span>
-                                                    <span ng-if="battalion.systemStatus=='on'" class="badge bg-success fs-6"> {{ battalion.systemStatus}} </span>
-                                                    <span ng-if="battalion.systemStatus=='off'" class="badge bg-danger fs-6"> {{ battalion.systemStatus}} </span>
+                                                <td id="td-b-{{ battalion.id }}" ng-class="battalion.systemStatus=='on' ? 'card-on' : 'card-off'">
+                                                    <div>
+                                                        <span class="badge bg-primary fs-6"> {{ battalion.systemMode }} </span>
+                                                        <span id="td-s-{{ battalion.id }}" class="badge bg-info fs-6"> {{ battalion.systemStatus}} </span>
                                                     </div>
                                                     
                                                     <div class="btn-group" role="group" aria-label="Basic mixed styles example">
@@ -247,13 +246,12 @@
                                     </div>
                                 </div>
                             </div>
-                             <div class="card">
+                             <div id="div-b-{{ battalion.id}}" ng-class="battalion.systemStatus=='on' ? 'card-on' : 'card-off'">
                                 <div class="card-title"> 
                                     
                                     <span class="badge bg-primary fs-6"> {{ battalion.systemMode }} </span>
-                                    <span ng-if="battalion.systemStatus=='on'" class="badge bg-success fs-6"> {{ battalion.systemStatus}} </span>
-                                    <span ng-if="battalion.systemStatus=='off'" class="badge bg-danger fs-6"> {{ battalion.systemStatus}} </span>
-                                    
+
+                                    <span id="div-s-{{ battalion.id }}" class="badge bg-info fs-6"> {{ battalion.systemStatus}} </span>
                                     
                                     <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                         <button type="button" class="btn btn-outline-danger btn-sm">Remove</button>
@@ -261,8 +259,10 @@
                                         <button type="button" class="btn btn-outline-success btn-sm">View</button>
                                     </div>  
                                 </div>
-                                <div>  
-                                    test
+                                <div class="centerd-flex align-items-center justify-content-center">  
+                                    
+                                    <div id="div-loading-{{ battalion.id }}" class="lds-ripple"><div></div><div></div></div>
+
                                 </div>
                              </div>
                         </div>
@@ -443,9 +443,12 @@
                     'Access-Control-Allow-Origin' : '*'
                 }
                 }).then(function successCallback(response) {
-                $scope.battalions = response.data;
+                    $scope.battalions = response.data;
+                    $scope.battalions.forEach((battalion) => {
+                            connectToSystems(battalion.id);
+                        });
                 }, function errorCallback(response) {
-                console.log(response.statusText);
+                    console.log(response.statusText);
                 });
             } 
 
@@ -463,15 +466,15 @@
             });
           
             $scope.filter = function (status){
-                    _refreshPageData(1,status);   
+                _refreshPageData(1,status);   
             } 
 
             $scope.search = function(){
-                    _refreshPageData(0,$("#searchCriteria").val());
+                _refreshPageData(0,$("#searchCriteria").val());
             }
 
             $scope.mine = function(){
-                    _refreshPageData(2)
+                _refreshPageData(2)
             }
 
             $scope.book = function(lot){
@@ -499,7 +502,7 @@
                     $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
                         $("#success-alert").slideUp(500);
                     });
-
+                    $("#div-loading-"+battalion).show();
                     _refreshPageData(global_mode,global_parameter);
                 }, function errorCallback(response) {
                 
@@ -605,6 +608,29 @@
                 $scope.view = currentView;
                 console.log($scope.view);
             }
+
+            function connectToSystems(battalion) {
+                socket = new WebSocket("ws://localhost:8090/notify/" + battalion);
+                socket.onopen = function() {
+                    console.log("Connected to the web socket");
+                };
+                socket.onmessage =function(m) {
+                    console.log("Got message: " + m.data);
+                    const tokens = m.data.split(',');
+                    // update local data 
+                    $scope.battalions.forEach((battalion) => {
+                        if(battalion.id==tokens[0])
+                            battalion.systemStatus=tokens[1];
+                    });
+                    $("#div-loading-"+tokens[0]).hide();
+                    $("#div-b-"+tokens[0]).attr('class', 'card-' + tokens[1]);
+                    $("#div-s-"+tokens[0]).text(tokens[1]);
+                    $("#td-b-"+tokens[0]).attr('class', 'card-' + tokens[1]);
+                    $("#td-s-"+tokens[0]).text(tokens[1]);
+                };
+            }   
+
+
         });
         
       </script>
@@ -615,7 +641,11 @@
     <script type="text/javascript"> 
     $( document ).ready(function() {
         
-    });     
+        
+
+    }); 
+
+     
     </script>
 
 </body>
