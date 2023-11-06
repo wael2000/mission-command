@@ -51,11 +51,25 @@ public class BattalionController {
     public Battalion setStatus(Battalion battalion) {
         Battalion bat = service.setStatus(battalion);
         // trigger the pipeline
-        if(Battalion.DEPLOYED.equals( bat.getStatus())){
+        if(Battalion.DEPLOYED.equals( bat.getStatus()) && bat.getSystemMode().equals("auto")){
             Map<String,String> payload = new HashMap<>();
             payload.put("battalion",bat.getDescription());
             payload.put("battalion_id",bat.id.toString());
-            System.out.println(payload);
+            pipelineProxyService.deploy(payload);
+        }
+        return bat;
+    }
+
+    @POST
+    @Path("/deploy")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Battalion deploy(Battalion battalion) {
+        Battalion bat = Battalion.findById(battalion.id);
+        // trigger the pipeline
+        if(Battalion.DEPLOYED.equals( bat.getStatus()) && bat.getSystemMode().equals("manual")){
+            Map<String,String> payload = new HashMap<>();
+            payload.put("battalion",bat.getDescription());
+            payload.put("battalion_id",bat.id.toString());
             pipelineProxyService.deploy(payload);
         }
         return bat;

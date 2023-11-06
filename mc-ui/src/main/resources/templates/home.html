@@ -141,7 +141,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr ng-repeat="battalion in battalions"> 
+                                            <tr ng-repeat="battalion in battalions | orderBy:'-id'"> 
                                                 <td ng-switch="(battalion.status)">
                                                     <span ng-switch-when="static" class="deploy" ng-click="deploy(this)" battalion="{{ battalion }}">
                                                         Deploy
@@ -178,9 +178,11 @@
                                                     </div>
                                                     
                                                     <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+
                                                         <button type="button" class="btn btn-outline-danger btn-sm">Remove</button>
                                                         <button type="button" class="btn btn-outline-warning btn-sm">Upgrade</button>
                                                         <button type="button" class="btn btn-outline-success btn-sm">View</button>
+                                                        
                                                     </div>  
                                                     
                                                 </td> 
@@ -198,7 +200,7 @@
 
                     <!-- # row parking lot grid -->
                     <div class="row" class="grid" ng-if="view=='grid'">                        
-                        <div class="col-lg-2 col-md-3 col-sm-3" ng-repeat="battalion in battalions" on-finish-render="callRenderFinished()" on-start-render="callRenderStarted()">
+                        <div class="col-lg-2 col-md-3 col-sm-3" ng-repeat="battalion in battalions | orderBy:'-id'" on-finish-render="callRenderFinished()" on-start-render="callRenderStarted()">
                             <div class="card">
                                 <div class="stat-widget-one">
                                     <div class="stat-icon dib">
@@ -254,9 +256,11 @@
                                     <span id="div-s-{{ battalion.id }}" class="badge bg-info fs-6"> {{ battalion.systemStatus}} </span>
                                     
                                     <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                                        <button type="button" class="btn btn-outline-danger btn-sm">Remove</button>
-                                        <button type="button" class="btn btn-outline-warning btn-sm">Upgrade</button>
-                                        <button type="button" class="btn btn-outline-success btn-sm">View</button>
+
+                                        <button type="button" ng-if="(battalion.status=='deployed' && battalion.systemStatus=='on' && battalion.systemMode=='manual')" class="btn btn-outline-danger btn-sm">Remove</button>
+                                        <button type="button" ng-if="(battalion.status=='deployed' && battalion.systemStatus=='off' && battalion.systemMode=='manual')" class="btn btn-outline-danger btn-sm">Start</button>
+                                        <button type="button" ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-warning btn-sm">Upgrade</button>
+                                        <button type="button" ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-success btn-sm">View</button>
                                     </div>  
                                 </div>
                                 <div class="centerd-flex align-items-center justify-content-center">  
@@ -416,9 +420,10 @@
 
         app.controller("ParkingManagementController", function ($scope, $http) {
             $scope.battalions = [];
+            $scope.currentBattalion;
             var global_mode = 1;
             var global_parameter = "";
-            $scope.view = "table";
+            $scope.view = "grid";
             _refreshPageData(1);
             function _refreshPageData(mode,parameter) {
                 global_mode = mode;
@@ -428,11 +433,11 @@
                 var data = {};
                 method = "GET";
                 if(mode==1) {
-                    url = '{composite}/battalion' + (parameter?'/status/' + parameter:'');
+                    url = 'https://{composite}/battalion' + (parameter?'/status/' + parameter:'');
                 } else if(mode==2) {
-                    url = '{composite}/battalion/email/{email}';
+                    url = 'https://{composite}/battalion/email/{email}';
                 } else 
-                    url = '{composite}/battalion/search/' + parameter;
+                    url = 'https://{composite}/battalion/search/' + parameter;
 
                 $http({
                 method: method,
@@ -487,7 +492,8 @@
 
             $scope.deploy = function(battalion){
                 var method = "POST";
-                var url = '{composite}/battalion/status';
+                var url = 'https://{composite}/battalion/status';
+                $scope.currentBattalion = battalion.battalion;
                 var data = {  "id" : battalion.battalion.id, "status" : "deployed" } ;
                 $http({
                 method: method,
@@ -502,8 +508,7 @@
                     $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
                         $("#success-alert").slideUp(500);
                     });
-                    $("#div-loading-"+battalion).show();
-                    _refreshPageData(global_mode,global_parameter);
+                    _refreshPageData(global_mode,global_parameter);                    
                 }, function errorCallback(response) {
                 
                 });
@@ -511,7 +516,7 @@
 
             $scope.mobile = function(battalion){
                 var method = "POST";
-                var url = '{composite}/battalion/status';
+                var url = 'https://{composite}/battalion/status';
                 var data = {  "id" : battalion.battalion.id, "status" : "mobile" } ;
                 $http({
                 method: method,
@@ -535,7 +540,7 @@
 
             $scope.dismount = function(battalion){
                 var method = "POST";
-                var url = '{composite}/battalion/status';
+                var url = 'https://{composite}/battalion/status';
                 var data = {  "id" : battalion.battalion.id, "status" : "dismounted" } ;
                 $http({
                 method: method,
@@ -559,7 +564,7 @@
 
             $scope.submitBooking = function(){
                 var method = "POST";
-                var url = '{composite}/booking';
+                var url = 'https://{composite}/booking';
                 var lot =  $("#lot-name").html();
                 var lotId =  $("#lot-id").val();
                 var data = { "lot" : { "id" : lotId } , "employee" : { "email" : '{email}'}};
@@ -610,9 +615,11 @@
             }
 
             function connectToSystems(battalion) {
-                socket = new WebSocket("ws://localhost:8090/notify/" + battalion);
+                socket = new WebSocket("wss://{composite}/notify/" + battalion);
                 socket.onopen = function() {
                     console.log("Connected to the web socket");
+                    if($scope.currentBattalion && $scope.currentBattalion.id == battalion)
+                    $("#div-loading-"+battalion).show();
                 };
                 socket.onmessage =function(m) {
                     console.log("Got message: " + m.data);

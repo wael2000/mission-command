@@ -4648,14 +4648,14 @@ h6.h1 {
 }
 /* ----------------------
       spinner 
+      https://loading.io/css/
 -------------------------*/
 .lds-ripple {
   background: url("../images/equipments/mil-systems.png") no-repeat;
-  display: inline-block;
+  display: none;
   position: relative;
   width: 100px;
   height: 100px;
-  visibility: hidden;
 }
 .lds-ripple div {
   position: absolute;
