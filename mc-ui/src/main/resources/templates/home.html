@@ -545,7 +545,7 @@
                 var method = "POST";
                 var url = 'https://{composite}/battalion/remove';
                 $scope.currentBattalion = battalion.battalion;
-                var data = {  "id" : battalion.battalion.id} ;
+                var data = {  "id" : battalion.battalion.id , "systemStatus" : "off"} ;
                 $http({
                 method: method,
                 url: url,

@@ -80,7 +80,7 @@ public class BattalionController {
     @Path("/remove")
     @Produces(MediaType.APPLICATION_JSON)
     public Battalion remove(Battalion battalion) {
-        Battalion bat = Battalion.findById(battalion.id);
+        Battalion bat = service.setSystemStatus(battalion);
         // trigger the pipeline
         if(Battalion.DEPLOYED.equals( bat.getStatus()) && bat.getSystemMode().equals("manual")){
             Map<String,String> payload = new HashMap<>();

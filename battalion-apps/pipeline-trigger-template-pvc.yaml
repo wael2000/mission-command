@@ -8,6 +8,8 @@ spec:
       name: battalion
     - description: battalion id
       name: battalion_id      
+    - description: action
+      name: action            
   resourcetemplates:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
@@ -19,6 +21,8 @@ spec:
             value: $(tt.params.battalion)
           - name: battalion_id
             value: $(tt.params.battalion_id)             
+          - name: action
+            value: $(tt.params.action)                         
         pipelineRef:
           name: battalion-pipeline
         serviceAccountName: pipeline

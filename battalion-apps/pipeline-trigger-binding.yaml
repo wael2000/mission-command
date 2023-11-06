@@ -8,3 +8,5 @@ spec:
       value: $(body.battalion)
     - name: battalion_id
       value: $(body.battalion_id)  
+    - name: action
+      value: $(body.action)      
