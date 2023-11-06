@@ -70,6 +70,23 @@ public class BattalionController {
             Map<String,String> payload = new HashMap<>();
             payload.put("battalion",bat.getDescription());
             payload.put("battalion_id",bat.id.toString());
+            payload.put("action","deploy");
+            pipelineProxyService.deploy(payload);
+        }
+        return bat;
+    }
+
+    @POST
+    @Path("/remove")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Battalion remove(Battalion battalion) {
+        Battalion bat = Battalion.findById(battalion.id);
+        // trigger the pipeline
+        if(Battalion.DEPLOYED.equals( bat.getStatus()) && bat.getSystemMode().equals("manual")){
+            Map<String,String> payload = new HashMap<>();
+            payload.put("battalion",bat.getDescription());
+            payload.put("battalion_id",bat.id.toString());
+            payload.put("action","remove");
             pipelineProxyService.deploy(payload);
         }
         return bat;
