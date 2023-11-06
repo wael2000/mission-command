@@ -55,6 +55,7 @@ public class BattalionController {
             Map<String,String> payload = new HashMap<>();
             payload.put("battalion",bat.getDescription());
             payload.put("battalion_id",bat.id.toString());
+            payload.put("action",bat.getStatus());
             pipelineProxyService.deploy(payload);
         }
         return bat;

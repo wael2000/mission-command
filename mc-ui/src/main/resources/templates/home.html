@@ -258,15 +258,13 @@
                                     <div class="btn-group" role="group" aria-label="Basic mixed styles example">
 
                                         <button type="button" ng-click="removeSystems(this)" ng-if="(battalion.status=='deployed' && battalion.systemStatus=='on' && battalion.systemMode=='manual')" class="btn btn-outline-danger btn-sm">Remove</button>
-                                        <button type="button" id="start-{{battalion.id}}" ng-click="startSystems(this)" ng-if="(battalion.status=='deployed' && battalion.systemStatus=='off' && battalion.systemMode=='manual')" class="btn btn-outline-success btn-sm">Start</button>
+                                        <button type="button" ng-click="startSystems(this)" ng-if="(battalion.status=='deployed' && battalion.systemStatus=='off' && battalion.systemMode=='manual')" class="btn btn-outline-success btn-sm">Start</button>
                                         <button type="button" ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-warning btn-sm">Upgrade</button>
                                         <button type="button" ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-success btn-sm">View</button>
                                     </div>  
                                 </div>
-                                <div class="centerd-flex align-items-center justify-content-center">  
-                                    
-                                    <div ng-if="((battalion.systemStatus=='off' && battalion.systemMode=='auto' && battalion.status=='deployed') || (battalion.systemStatus=='off' && battalion.systemMode=='manual') )" id="div-loading-{{ battalion.id }}" class="lds-ripple"><div></div><div></div></div>
-
+                                <div class="centerd-flex align-items-center justify-content-center">                                      
+                                    <div id="div-loading-{{ battalion.id }}" class="lds-ripple hidden"><div></div><div></div></div>
                                 </div>
                              </div>
                         </div>
@@ -523,13 +521,13 @@
                 $scope.currentBattalion = battalion.battalion;
                 var data = {  "id" : battalion.battalion.id, "status" : "deployed" } ;
                 $http({
-                method: method,
-                url: url,
-                data: angular.toJson(data),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin' : '*'
-                }
+                    method: method,
+                    url: url,
+                    data: angular.toJson(data),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin' : '*'
+                    }
                 }).then(function successCallback(response) {
                     $("#success-alert").show();
                     $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
@@ -674,17 +672,16 @@
                 };
                 socket.onmessage =function(m) {
                     console.log("Got message: " + m.data);
-                    _refreshPageData(global_mode,global_parameter);
+                    //_refreshPageData(global_mode,global_parameter);
                     const tokens = m.data.split(',');
-                    /*$scope.battalions.forEach((battalion) => {
+                    $scope.battalions.forEach((battalion) => {
                         if(battalion.id==tokens[0])
                             battalion.systemStatus=tokens[1];
                     });
-                        $("#div-b-"+tokens[0]).attr('class', 'card-' + tokens[1]);
-                        $("#div-s-"+tokens[0]).text(tokens[1]);
-                        $("#td-b-"+tokens[0]).attr('class', 'card-' + tokens[1]);
-                        $("#td-s-"+tokens[0]).text(tokens[1]);
-                    */
+                    $("#div-b-"+tokens[0]).attr('class', 'card-' + tokens[1]);
+                    $("#div-s-"+tokens[0]).text(tokens[1]);
+                    $("#td-b-"+tokens[0]).attr('class', 'card-' + tokens[1]);
+                    $("#td-s-"+tokens[0]).text(tokens[1]);
                     $("#div-loading-"+tokens[0]).hide();
                     
                 };
