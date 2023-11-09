@@ -13,7 +13,7 @@ oc adm groups add-users ocp-admins USERNAME
 2 - label projects that need to be managed by argoCD
 
 # add label to the ns refer to ArgoCD ns
-oc label ns command-post argocd.argoproj.io/managed-by=mod-cicd --overwrite
+oc label ns command-post argocd.argoproj.io/managed-by=demo-cicd --overwrite
 
 3 - lift pipeline permission up 
 # create a new cluster role 

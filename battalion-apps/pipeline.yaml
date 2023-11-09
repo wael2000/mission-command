@@ -58,7 +58,7 @@ spec:
       workspaces:
         - name: output
           workspace: source
-    - name: openshift-client
+    - name: create-project
       params:
         - name: SCRIPT
           value: 'oc new-project battalion-$(params.battalion) '
@@ -69,7 +69,12 @@ spec:
       taskRef:
         kind: ClusterTask
         name: openshift-client
-    - name: openshift-client-kzp
+      when:
+        - input: $(params.action)
+          operator: in
+          values:
+            - deploy
+    - name: add-to-manage-scope
       params:
         - name: SCRIPT
           value: >-
@@ -78,14 +83,19 @@ spec:
         - name: VERSION
           value: latest
       runAfter:
-        - openshift-client
+        - create-project
       taskRef:
         kind: ClusterTask
         name: openshift-client
+      when:
+        - input: $(params.action)
+          operator: in
+          values:
+            - deploy
       workspaces:
         - name: manifest-dir
           workspace: source
-    - name: openshift-client-yu3
+    - name: deploy-application
       params:
         - name: SCRIPT
           value: >-
@@ -95,12 +105,35 @@ spec:
         - name: VERSION
           value: latest
       runAfter:
-        - openshift-client-kzp
+        - add-to-manage-scope
       taskRef:
         kind: ClusterTask
         name: openshift-client
+      when:
+        - input: $(params.action)
+          operator: in
+          values:
+            - deploy
       workspaces:
         - name: manifest-dir
           workspace: source
+    - name: remove-the-app
+      params:
+        - name: SCRIPT
+          value: >-
+            oc delete application battalion-$(params.battalion) -n demo-cicd |
+            oc delete project  battalion-$(params.battalion) 
+        - name: VERSION
+          value: latest
+      runAfter:
+        - git-clone
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      when:
+        - input: $(params.action)
+          operator: in
+          values:
+            - remove
   workspaces:
     - name: source
