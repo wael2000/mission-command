@@ -256,9 +256,8 @@
                                     <span id="div-s-{{ battalion.id }}" class="badge bg-info fs-6"> {{ battalion.systemStatus}} </span>
                                     
                                     <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-
                                         <button type="button" ng-click="removeSystems(this)" ng-if="(battalion.status=='deployed' && battalion.systemStatus=='on' && battalion.systemMode=='manual')" class="btn btn-outline-danger btn-sm">Remove</button>
-                                        <button type="button" ng-click="startSystems(this)" ng-if="(battalion.status=='deployed' && battalion.systemStatus=='off' && battalion.systemMode=='manual')" class="btn btn-outline-success btn-sm">Start</button>
+                                        <button type="button" ng-click="startSystems(this)"  ng-if="(battalion.status=='deployed' && battalion.systemStatus=='off' && battalion.systemMode=='manual')" class="btn btn-outline-success btn-sm">Start</button>
                                         <button type="button" ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-warning btn-sm">Upgrade</button>
                                         <button type="button" ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-success btn-sm">View</button>
                                     </div>  
@@ -438,13 +437,13 @@
                     url = 'https://{composite}/battalion/search/' + parameter;
 
                 $http({
-                method: method,
-                url: url,
-                data: angular.toJson(data),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin' : '*'
-                }
+                    method: method,
+                    url: url,
+                    data: angular.toJson(data),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin' : '*'
+                    }
                 }).then(function successCallback(response) {
                     $scope.battalions = response.data;
                     $scope.battalions.forEach((battalion) => {
@@ -457,6 +456,8 @@
 
             $scope.callRenderFinished = function () {
                 //console.log('Method called by the directive, when finished rendering');
+                if($scope.currentBattalion)
+                    $("#div-loading-"+$scope.currentBattalion.id).show();
             }
             $scope.callRenderStarted = function () {
                 //console.log('Method2 called by the directive, when starting rendering');
@@ -509,7 +510,7 @@
                     $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
                         $("#success-alert").slideUp(500);
                     });
-                    _refreshPageData(global_mode,global_parameter);                    
+                    _refreshPageData(global_mode,global_parameter);
                 }, function errorCallback(response) {
             
                 });
@@ -667,8 +668,8 @@
                 socket = new WebSocket("wss://{composite}/notify/" + battalion);
                 socket.onopen = function() {
                     console.log("Connected to the web socket");
-                    if($scope.currentBattalion && $scope.currentBattalion.id == battalion)
-                    $("#div-loading-"+battalion).show();
+                    //if($scope.currentBattalion && $scope.currentBattalion.id == battalion)
+                    //$("#div-loading-"+battalion).show();
                 };
                 socket.onmessage =function(m) {
                     console.log("Got message: " + m.data);
@@ -683,7 +684,7 @@
                     $("#td-b-"+tokens[0]).attr('class', 'card-' + tokens[1]);
                     $("#td-s-"+tokens[0]).text(tokens[1]);
                     $("#div-loading-"+tokens[0]).hide();
-                    
+                    $scope.currentBattalion = null;
                 };
             }   
 

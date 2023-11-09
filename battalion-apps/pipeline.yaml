@@ -12,6 +12,10 @@ spec:
       description: battalion id
       name: battalion_id
       type: string
+    - default: deploy
+      description: action
+      name: action
+      type: string
   tasks:
     - name: git-clone
       params:
