@@ -23,4 +23,23 @@ public class BubbleResource {
         return color.build();
     }
 
+    @GET
+    @Path("/helloworld")
+    public String hello1() {
+        return "Hello World";
+    }
+
+    @GET
+    @Path("/hellocountry")
+    public String hello2() {
+        return "Hello Country";
+    }
+
+    @GET
+    @Path("/hellocity")
+    public String Hello2() {
+        return "Hello City";
+    }
+
+    
 }
