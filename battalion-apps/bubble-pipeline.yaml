@@ -1,0 +1,224 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: bubble-pipeline
+spec:
+  params:
+    - default: 'true'
+      name: skip
+      type: string
+  tasks:
+    - name: git-clone
+      params:
+        - name: url
+          value: 'https://github.com/wael2000/mission-command'
+        - name: revision
+          value: ''
+        - name: refspec
+          value: ''
+        - name: submodules
+          value: 'true'
+        - name: depth
+          value: '1'
+        - name: sslVerify
+          value: 'true'
+        - name: crtFileName
+          value: ca-bundle.crt
+        - name: subdirectory
+          value: ''
+        - name: sparseCheckoutDirectories
+          value: ''
+        - name: deleteExisting
+          value: 'true'
+        - name: httpProxy
+          value: ''
+        - name: httpsProxy
+          value: ''
+        - name: noProxy
+          value: ''
+        - name: verbose
+          value: 'true'
+        - name: gitInitImage
+          value: >-
+            registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:9b14f52b21d29d8d83ea4c0e78623debc954f1a732d2be6d1a7269fbba23b1a4
+        - name: userHome
+          value: /home/git
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      when:
+        - input: $(params.skip)
+          operator: notin
+          values:
+            - 'true'
+      workspaces:
+        - name: output
+          workspace: source
+    - name: build-image
+      params:
+        - name: VERSION
+          value: latest
+        - name: PATH_CONTEXT
+          value: bubbles-frontend
+        - name: TLSVERIFY
+          value: 'true'
+        - name: MAVEN_ARGS_APPEND
+          value: ''
+        - name: MAVEN_CLEAR_REPO
+          value: 'false'
+        - name: MAVEN_MIRROR_URL
+          value: ''
+        - name: IMAGE
+          value: 'image-registry.openshift-image-registry.svc:5000/demo-cicd/bgd'
+        - name: BUILDER_IMAGE
+          value: >-
+            registry.redhat.io/rhel8/buildah@sha256:55f5c7d88c77e1ab5a2ab8e877172b2b66cb196e21f10dc45148470d0ee8bbae
+        - name: SKIP_PUSH
+          value: 'false'
+        - name: ENV_VARS
+          value: []
+      runAfter:
+        - code-analysis
+      taskRef:
+        kind: ClusterTask
+        name: s2i-java
+      when:
+        - input: $(params.skip)
+          operator: notin
+          values:
+            - 'true'
+      workspaces:
+        - name: source
+          workspace: source
+    - name: unit-test
+      params:
+        - name: MAVEN_IMAGE
+          value: >-
+            registry.redhat.io/ubi8/openjdk-17@sha256:af305e087061cbaa4107ce0b304a1ef987f6b54bae3f75bfd529cfd084cba9b5
+        - name: GOALS
+          value:
+            - test
+        - name: MAVEN_MIRROR_URL
+          value: ''
+        - name: SERVER_USER
+          value: ''
+        - name: SERVER_PASSWORD
+          value: ''
+        - name: PROXY_USER
+          value: ''
+        - name: PROXY_PASSWORD
+          value: ''
+        - name: PROXY_PORT
+          value: ''
+        - name: PROXY_HOST
+          value: ''
+        - name: PROXY_NON_PROXY_HOSTS
+          value: ''
+        - name: PROXY_PROTOCOL
+          value: http
+        - name: CONTEXT_DIR
+          value: bubbles-frontend
+      runAfter:
+        - mvn-config
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      when:
+        - input: $(params.skip)
+          operator: notin
+          values:
+            - 'true'
+      workspaces:
+        - name: source
+          workspace: source
+        - name: maven-settings
+          workspace: source
+    - name: code-analysis
+      params:
+        - name: MAVEN_IMAGE
+          value: 'registry.redhat.io/ubi8/openjdk-11:1.17-9'
+        - name: GOALS
+          value:
+            - install
+            - 'sonar:sonar'
+            - '-Dsonar.host.url=http://sonarqube:9000'
+            - '-Dsonar.userHome=/tmp/sonar'
+            - '-DskipTests=true'
+        - name: MAVEN_MIRROR_URL
+          value: ''
+        - name: SERVER_USER
+          value: ''
+        - name: SERVER_PASSWORD
+          value: ''
+        - name: PROXY_USER
+          value: ''
+        - name: PROXY_PASSWORD
+          value: ''
+        - name: PROXY_PORT
+          value: ''
+        - name: PROXY_HOST
+          value: ''
+        - name: PROXY_NON_PROXY_HOSTS
+          value: ''
+        - name: PROXY_PROTOCOL
+          value: http
+        - name: CONTEXT_DIR
+          value: bubbles-frontend
+      runAfter:
+        - unit-test
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      when:
+        - input: $(params.skip)
+          operator: notin
+          values:
+            - 'true'
+      workspaces:
+        - name: source
+          workspace: source
+        - name: maven-settings
+          workspace: source
+    - name: mvn-config
+      params:
+        - name: MAVEN_MIRROR_REPO
+          value: 'http://nexus:8081/repository/maven-public/'
+        - name: SERVER_USERNAME
+          value: admin
+        - name: SERVER_PASSWORD
+          value: admin123
+      runAfter:
+        - git-clone
+      taskRef:
+        kind: Task
+        name: mvn-config
+      when:
+        - input: $(params.skip)
+          operator: notin
+          values:
+            - 'true'
+      workspaces:
+        - name: workspace
+          workspace: source
+    - name: skopeo-copy
+      params:
+        - name: srcImageURL
+          value: >-
+            docker://image-registry.openshift-image-registry.svc:5000/demo-cicd/bgd:latest
+        - name: destImageURL
+          value: 'docker://quay.io/wael2000/bgd:1.0.0'
+        - name: srcTLSverify
+          value: 'true'
+        - name: destTLSverify
+          value: 'true'
+      runAfter:
+        - build-image
+      taskRef:
+        kind: ClusterTask
+        name: skopeo-copy
+      workspaces:
+        - name: images-url
+          workspace: source
+  workspaces:
+    - name: source
+    - name: registry-secret
