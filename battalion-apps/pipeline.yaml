@@ -135,5 +135,47 @@ spec:
           operator: in
           values:
             - remove
+      workspaces:
+        - name: manifest-dir
+          workspace: source
+    - name: deployment-notification
+      params:
+        - name: battalion_id
+          value: $(params.battalion_id))
+        - name: system
+          value: 'on'
+        - name: battalion_url
+          value: >-
+            https://mission-command-command-post.apps.cluster-q9hhp.dynamic.opentlc.com/battalion/system
+      runAfter:
+        - deploy-application
+      taskRef:
+        kind: Task
+        name: battalion-notification-task
+      workspaces:
+        - name: workspace
+          workspace: source
+    - name: undeployment-notification
+      params:
+        - name: battalion_id
+          value: $(params.battalion_id)
+        - name: system
+          value: 'off'
+        - name: battalion_url
+          value: >-
+            https://mission-command-command-post.apps.cluster-q9hhp.dynamic.opentlc.com/battalion/system
+      runAfter:
+        - remove-the-app
+      taskRef:
+        kind: Task
+        name: battalion-notification-task
+      when:
+        - input: $(params.action)
+          operator: in
+          values:
+            - remove
+      workspaces:
+        - name: workspace
+          workspace: source
   workspaces:
     - name: source

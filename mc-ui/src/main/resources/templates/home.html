@@ -259,7 +259,10 @@
                                         <button type="button" ng-click="removeSystems(this)" ng-if="(battalion.status=='deployed' && battalion.systemStatus=='on' && battalion.systemMode=='manual')" class="btn btn-outline-danger btn-sm">Remove</button>
                                         <button type="button" ng-click="startSystems(this)"  ng-if="(battalion.status=='deployed' && battalion.systemStatus=='off' && battalion.systemMode=='manual')" class="btn btn-outline-success btn-sm">Start</button>
                                         <button type="button" ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-warning btn-sm">Upgrade</button>
-                                        <button type="button" ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-success btn-sm">View</button>
+                                        <div ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-success btn-sm"><a href="https://console-openshift-console.apps.cluster-q9hhp.dynamic.opentlc.com/topology/ns/battalion-{{ battalion.description }}?view=graph" target="_blank"> View </a></div>
+                                        
+
+                                        <!-- <button type="button" ng-click="viewApp(this)" ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-success btn-sm">View</button> -->
                                     </div>  
                                 </div>
                                 <div class="centerd-flex align-items-center justify-content-center">                                      
@@ -612,6 +615,7 @@
                 });
             }
 
+
             $scope.submitBooking = function(){
                 var method = "POST";
                 var url = 'https://{composite}/booking';
@@ -663,6 +667,8 @@
                 $scope.view = currentView;
                 console.log($scope.view);
             }
+
+            
 
             function connectToSystems(battalion) {
                 socket = new WebSocket("wss://{composite}/notify/" + battalion);
