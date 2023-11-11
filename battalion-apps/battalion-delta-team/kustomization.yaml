@@ -5,7 +5,7 @@ resources:
 patches:
 - patch: |-
     - op: replace
-      path: /spec/template/spec/containers/image
+      path: /spec/template/spec/containers/0/image
       value: quay.io/wael2000/bgd:delta-team
   target:
     group: apps
