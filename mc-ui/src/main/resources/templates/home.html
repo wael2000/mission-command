@@ -38,9 +38,6 @@
                         <img class="pull-left m-r-10 logo-img" src="img/redhat.png" alt="" />
                         <h5 class="pull-left">Mission Command (Van het veld naar kantoor)</h5> <br/>
                         <!-- # alert -->
-                        <span class="alert alert-success hidden" id="success-alert">
-                            Transaction is successfuly done!
-                        </span>
                         <span class="alert alert-error hidden" id="error-alert">
                             Transactions can't be submitted 
                         </span>
@@ -201,7 +198,7 @@
                     <!-- # row parking lot grid -->
                     <div class="row" class="grid" ng-if="view=='grid'">                        
                         <div class="col-lg-2 col-md-3 col-sm-3" ng-repeat="battalion in battalions | orderBy:'-id'" on-finish-render="callRenderFinished()" on-start-render="callRenderStarted()">
-                            <div class="card">
+                            <div class="card">                                
                                 <div class="stat-widget-one">
                                     <div class="stat-icon dib">
                                         <i ng-if="(battalion.status=='static')" class="ti-map-alt"></i>
@@ -211,6 +208,7 @@
 
                                     <span class="float-md-right" ng-switch="(battalion.status)">
                                         <div class="ti-user stat-digit badge"> {{ battalion.members.length }} </div>
+                                        
                                         <div ng-switch-when="static">
                                             <i class="deploy float-md-right" ng-click="deploy(this)" battalion="{{ battalion }}">
                                                 Deploy
@@ -247,6 +245,14 @@
                                             </div>
                                     </div>
                                 </div>
+                                <span class="btn btn-success badge" ng-click="build(this)"> Build </span>
+                                <span class="alert-success hidden" id="build-alert-{{battalion.id}}">
+                                    Build has started!
+                                </span>
+                                <span class="alert-success hidden" id="success-alert-{{battalion.id}}">
+                                    Action is successfuly done!
+                                </span>
+
                             </div>
                              <div id="div-b-{{ battalion.id}}" ng-class="battalion.systemStatus=='on' ? 'card-on' : 'card-off'">
                                 <div class="card-title"> 
@@ -259,10 +265,8 @@
                                         <button type="button" ng-click="removeSystems(this)" ng-if="(battalion.status=='deployed' && battalion.systemStatus=='on' && battalion.systemMode=='manual')" class="btn btn-outline-danger btn-sm">Remove</button>
                                         <button type="button" ng-click="startSystems(this)"  ng-if="(battalion.status=='deployed' && battalion.systemStatus=='off' && battalion.systemMode=='manual')" class="btn btn-outline-success btn-sm">Start</button>
                                         <button type="button" ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-warning btn-sm">Upgrade</button>
-                                        <div ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-success btn-sm"><a href="https://console-openshift-console.apps.cluster-q9hhp.dynamic.opentlc.com/topology/ns/battalion-{{ battalion.description }}?view=graph" target="_blank"> View </a></div>
+                                        <div ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-success btn-sm"><a href="https://console-openshift-console.apps.cluster-zzmdz.dynamic.opentlc.com/topology/ns/battalion-{{ battalion.description }}?view=graph" target="_blank"> View </a></div>
                                         
-
-                                        <!-- <button type="button" ng-click="viewApp(this)" ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-success btn-sm">View</button> -->
                                     </div>  
                                 </div>
                                 <div class="centerd-flex align-items-center justify-content-center">                                      
@@ -500,6 +504,7 @@
                 else 
                     $scope.currentBattalion = null;
                 var data = {  "id" : battalion.battalion.id, "status" : "deployed" } ;
+                $("#success-alert-" + battalion.battalion.id).show();
                 $http({
                     method: method,
                     url: url,
@@ -509,9 +514,8 @@
                         'Access-Control-Allow-Origin' : '*'
                     }
                 }).then(function successCallback(response) {
-                    $("#success-alert").show();
-                    $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
-                        $("#success-alert").slideUp(500);
+                    $("#success-alert-" + battalion.battalion.id).fadeTo(2000, 500).slideUp(500, function(){
+                        $("#success-alert-" + battalion.battalion.id).slideUp(500);
                     });
                     _refreshPageData(global_mode,global_parameter);
                 }, function errorCallback(response) {
@@ -524,6 +528,7 @@
                 var url = 'https://{composite}/battalion/deploy';
                 $scope.currentBattalion = battalion.battalion;
                 var data = {  "id" : battalion.battalion.id, "status" : "deployed" } ;
+                $("#success-alert-" + battalion.battalion.id).show();
                 $http({
                     method: method,
                     url: url,
@@ -533,9 +538,8 @@
                         'Access-Control-Allow-Origin' : '*'
                     }
                 }).then(function successCallback(response) {
-                    $("#success-alert").show();
-                    $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
-                        $("#success-alert").slideUp(500);
+                    $("#success-alert-" + battalion.battalion.id).fadeTo(2000, 500).slideUp(500, function(){
+                        $("#success-alert-" + battalion.battalion.id).slideUp(500);
                     });
                     _refreshPageData(global_mode,global_parameter);
                 }, function errorCallback(response) {
@@ -548,6 +552,7 @@
                 var url = 'https://{composite}/battalion/remove';
                 $scope.currentBattalion = battalion.battalion;
                 var data = {  "id" : battalion.battalion.id , "systemStatus" : "off"} ;
+                $("#success-alert-" + battalion.battalion.id).show();
                 $http({
                 method: method,
                 url: url,
@@ -557,9 +562,8 @@
                     'Access-Control-Allow-Origin' : '*'
                 }
                 }).then(function successCallback(response) {
-                    $("#success-alert").show();
-                    $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
-                        $("#success-alert").slideUp(500);
+                    $("#success-alert-" + battalion.battalion.id).fadeTo(2000, 500).slideUp(500, function(){
+                        $("#success-alert-" + battalion.battalion.id).slideUp(500);
                     });
                     _refreshPageData(global_mode,global_parameter);
                 }, function errorCallback(response) {
@@ -571,6 +575,7 @@
                 var method = "POST";
                 var url = 'https://{composite}/battalion/status';
                 var data = {  "id" : battalion.battalion.id, "status" : "mobile" } ;
+                $("#success-alert-" + battalion.battalion.id).show();
                 $http({
                 method: method,
                 url: url,
@@ -580,9 +585,8 @@
                     'Access-Control-Allow-Origin' : '*'
                 }
                 }).then(function successCallback(response) {
-                    $("#success-alert").show();
-                    $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
-                        $("#success-alert").slideUp(500);
+                    $("#success-alert-" + battalion.battalion.id).fadeTo(2000, 500).slideUp(500, function(){
+                        $("#success-alert-" + battalion.battalion.id).slideUp(500);
                     });
 
                     _refreshPageData(global_mode,global_parameter);
@@ -595,6 +599,7 @@
                 var method = "POST";
                 var url = 'https://{composite}/battalion/status';
                 var data = {  "id" : battalion.battalion.id, "status" : "dismounted" } ;
+                $("#success-alert-" + battalion.battalion.id).show();
                 $http({
                 method: method,
                 url: url,
@@ -604,9 +609,8 @@
                     'Access-Control-Allow-Origin' : '*'
                 }
                 }).then(function successCallback(response) {
-                    $("#success-alert").show();
-                    $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
-                        $("#success-alert").slideUp(500);
+                    $("#success-alert-" + battalion.battalion.id).fadeTo(2000, 500).slideUp(500, function(){
+                        $("#success-alert-" + battalion.battalion.id).slideUp(500);
                     });
 
                     _refreshPageData(global_mode,global_parameter);
@@ -614,7 +618,6 @@
                 
                 });
             }
-
 
             $scope.submitBooking = function(){
                 var method = "POST";
@@ -633,7 +636,7 @@
                 }).then(function successCallback(response) {
                     if(response.data.response) {
                         $("#success-alert").show();
-                        $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+                        $("#success-alert" ).fadeTo(2000, 500).slideUp(500, function(){
                             $("#success-alert").slideUp(500);
                         });
                         _refreshPageData(global_mode,global_parameter);
@@ -649,6 +652,31 @@
                         $("#error-alert").fadeTo(2000, 500).slideUp(500, function(){
                             $("#error-alert").slideUp(500);
                         });
+                });
+            }
+
+
+            $scope.build = function(battalion){
+                var method = "POST";
+                var url = 'https://{composite}/battalion/build';
+                $scope.currentBattalion = battalion.battalion;
+                var data = {  "id" : battalion.battalion.id  } ;
+                $("#build-alert-" + battalion.battalion.id).show();
+                $http({
+                    method: method,
+                    url: url,
+                    data: angular.toJson(data),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin' : '*'
+                    }
+                }).then(function successCallback(response) {
+                    $("#build-alert-" + battalion.battalion.id).fadeTo(2000, 500).slideUp(500, function(){
+                            $("#build-alert-" + battalion.battalion.id).slideUp(500);
+                    });
+                    //_refreshPageData(global_mode,global_parameter);
+                }, function errorCallback(response) {
+                
                 });
             }
 

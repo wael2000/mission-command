@@ -7,6 +7,9 @@ patches:
     - op: replace
       path: /spec/template/spec/containers/0/image
       value: quay.io/wael2000/bgd:fox-team
+    - op: replace
+      path: /spec/replicas
+      value: 2
   target:
     group: apps
     kind: Deployment
