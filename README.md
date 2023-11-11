@@ -32,8 +32,11 @@ rules:
 oc adm policy add-cluster-role-to-user namespaces-manager system:serviceaccount:command-post:pipeline
 
 # add cluster-reader role
-oc adm policy add-cluster-role-to-user cluster-reader system:serviceaccount:command-post:pipeline
+# oc adm policy add-cluster-role-to-user cluster-reader system:serviceaccount:command-post:pipeline
 
+# add command-post pipeline sa as edit role in demo-cicd
+
+oc policy add-role-to-user edit system:serviceaccount:command-post:pipeline -n demo-cicd
 
 oc adm policy \
     add-cluster-role-to-user self-provisioner \

@@ -14,7 +14,7 @@ public class BubbleResourceTest {
     @Test
     public void testHelloWorld() {
         given()
-          .when().get("/bubble/helloworld1")
+          .when().get("/bubble/helloworld")
           .then()
              .statusCode(200)
              .body(is("Hello World"));

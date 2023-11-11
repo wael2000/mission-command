@@ -141,7 +141,7 @@ spec:
     - name: deployment-notification
       params:
         - name: battalion_id
-          value: $(params.battalion_id))
+          value: $(params.battalion_id)
         - name: system
           value: 'on'
         - name: battalion_url

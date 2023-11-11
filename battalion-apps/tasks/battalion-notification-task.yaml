@@ -14,7 +14,7 @@ spec:
       default: on
     - name: battalion_url
       type: string
-      default: "https://mission-command-command-post.apps.cluster-q9hhp.dynamic.opentlc.com/battalion/system"
+      default: "https://mission-command-command-post.apps.cluster-zzmdz.dynamic.opentlc.com/battalion/system"
   workspaces:
     - name: workspace
   steps:
@@ -23,4 +23,4 @@ spec:
       script: |
         #!/usr/bin/env bash
 
-        curl -X POST -d '{"id" : "$(params.battalion_id)" , "systemStatus" : "$(params.system)"}' $(params.battalion_url)  -H 'Content-Type: application/json'
+        curl -XPOST -d '{"id": "$(params.battalion_id)", "systemStatus" : "$(params.system)"}' $(params.battalion_url) -H 'Content-Type: application/json'
