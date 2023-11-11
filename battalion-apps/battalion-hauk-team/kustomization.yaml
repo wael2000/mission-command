@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../battalion-base
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/image
+      value: quay.io/wael2000/bgd:hauk-team
+  target:
+    group: apps
+    kind: Deployment
+    name: battalion
+    version: v1
