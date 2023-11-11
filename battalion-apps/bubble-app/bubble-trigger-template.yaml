@@ -1,0 +1,24 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: bubble-trigger-template
+spec:
+  params:
+    - description: battalion
+      name: battalion
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: bubble-pipeline-run-$(tt.params.battalion)-
+      spec:
+        params:
+          - name: battalion
+            value: $(tt.params.battalion)
+        pipelineRef:
+          name: bubble-pipeline
+        serviceAccountName: pipeline
+        workspaces:
+          - name: source
+            persistentVolumeClaim:
+              claimName: bubble-pvc

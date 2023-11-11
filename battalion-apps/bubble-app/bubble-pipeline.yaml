@@ -4,8 +4,8 @@ metadata:
   name: bubble-pipeline
 spec:
   params:
-    - default: 'true'
-      name: skip
+    - description: battalion
+      name: battalion
       type: string
   tasks:
     - name: git-clone
@@ -46,11 +46,6 @@ spec:
       taskRef:
         kind: ClusterTask
         name: git-clone
-      when:
-        - input: $(params.skip)
-          operator: notin
-          values:
-            - 'true'
       workspaces:
         - name: output
           workspace: source
@@ -69,7 +64,8 @@ spec:
         - name: MAVEN_MIRROR_URL
           value: ''
         - name: IMAGE
-          value: 'image-registry.openshift-image-registry.svc:5000/demo-cicd/bgd'
+          value: >-
+            image-registry.openshift-image-registry.svc:5000/demo-cicd/bgd:$(params.battalion)
         - name: BUILDER_IMAGE
           value: >-
             registry.redhat.io/rhel8/buildah@sha256:55f5c7d88c77e1ab5a2ab8e877172b2b66cb196e21f10dc45148470d0ee8bbae
@@ -82,11 +78,6 @@ spec:
       taskRef:
         kind: ClusterTask
         name: s2i-java
-      when:
-        - input: $(params.skip)
-          operator: notin
-          values:
-            - 'true'
       workspaces:
         - name: source
           workspace: source
@@ -123,11 +114,6 @@ spec:
       taskRef:
         kind: ClusterTask
         name: maven
-      when:
-        - input: $(params.skip)
-          operator: notin
-          values:
-            - 'true'
       workspaces:
         - name: source
           workspace: source
@@ -169,11 +155,6 @@ spec:
       taskRef:
         kind: ClusterTask
         name: maven
-      when:
-        - input: $(params.skip)
-          operator: notin
-          values:
-            - 'true'
       workspaces:
         - name: source
           workspace: source
@@ -192,11 +173,6 @@ spec:
       taskRef:
         kind: Task
         name: mvn-config
-      when:
-        - input: $(params.skip)
-          operator: notin
-          values:
-            - 'true'
       workspaces:
         - name: workspace
           workspace: source
@@ -204,9 +180,9 @@ spec:
       params:
         - name: srcImageURL
           value: >-
-            docker://image-registry.openshift-image-registry.svc:5000/demo-cicd/bgd:latest
+            docker://image-registry.openshift-image-registry.svc:5000/demo-cicd/bgd:$(params.battalion)
         - name: destImageURL
-          value: 'docker://quay.io/wael2000/bgd:1.0.0'
+          value: 'docker://quay.io/wael2000/bgd:$(params.battalion)'
         - name: srcTLSverify
           value: 'true'
         - name: destTLSverify
@@ -221,4 +197,3 @@ spec:
           workspace: source
   workspaces:
     - name: source
-    - name: registry-secret
