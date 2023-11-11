@@ -4,9 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import javax.inject.Inject;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -17,8 +15,9 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import org.redhat.services.BattalionService;
-import org.redhat.services.PipelineProxyService;
 import org.redhat.model.Battalion;
+import org.redhat.services.PipelineProxyService;
+import org.redhat.services.BuildPipelineProxyService;
 
 
 @Path("/battalion")
@@ -31,6 +30,11 @@ public class BattalionController {
     @RestClient
     PipelineProxyService pipelineProxyService;
     
+
+    @Inject
+    @RestClient
+    BuildPipelineProxyService builsPipelineProxyService;
+
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -90,6 +94,17 @@ public class BattalionController {
             payload.put("action","remove");
             pipelineProxyService.deploy(payload);
         }
+        return bat;
+    }
+
+    @POST
+    @Path("/build")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Battalion build(Battalion battalion) {
+        Battalion bat = Battalion.findById(battalion.id);
+        Map<String,String> payload = new HashMap<>();
+        payload.put("battalion",bat.getDescription());
+        builsPipelineProxyService.build(payload);
         return bat;
     }
 
