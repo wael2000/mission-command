@@ -67,3 +67,11 @@ oc delete project battalion-fox-team
 oc delete project battalion-hauk-team
 oc delete project battalion-mes-team
 oc delete project battalion-zwarte-team
+
+
+
+
+https://api.cluster-zzmdz.dynamic.opentlc.com:6443/api/v1/namespaces/demo-cicd/pods?limit=500
+
+
+https://api.cluster-zzmdz.dynamic.opentlc.com:6443/apis/project.openshift.io/v1/projects?labelSelector=kubernetes.io/metadata.name=demo-cicd

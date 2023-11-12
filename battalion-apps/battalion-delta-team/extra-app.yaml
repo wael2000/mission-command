@@ -2,6 +2,8 @@ kind: DeploymentConfig
 apiVersion: apps.openshift.io/v1
 metadata:
   name: fixed-wings
+  labels:
+    app: battalion  
 spec:
   strategy:
     type: Recreate
