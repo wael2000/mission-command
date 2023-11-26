@@ -4697,3 +4697,12 @@ h6.h1 {
     opacity: 0;
   }
 }
+
+
+.pod{
+  text-align: center!important;
+  width: 100px;
+  height: 100px;
+  background: url("../images/icons/pod-small.png") no-repeat;
+
+}

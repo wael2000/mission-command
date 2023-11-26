@@ -34,7 +34,7 @@ public class PageResource {
     public TemplateInstance home() {
         return  home.data("composite",compositeURL)
                     .data("view", "grid")
-                    .data("username", "wael")
+                    .data("username", "Kees")
                     .data("emp", "")
                     .data("email", "email");
     }

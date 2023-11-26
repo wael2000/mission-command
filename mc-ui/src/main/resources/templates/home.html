@@ -101,7 +101,7 @@
                     <div class="col-lg-12 p-r-0 title-margin-right">
                         <div class="page-header">
                             <div class="page-title">
-                                    <h1>Hello {username}, <span>Use blow filters</span></h1>
+                                    <h1>Hello {username}, <span>Use below filters</span></h1>
                             </div>
                             <div class="button-list">
                                 <button type="button" class="btn btn-primary m-b-10 m-l-5" id="all" ng-click="filter()">All</button>
@@ -264,12 +264,12 @@
                                     <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                                         <button type="button" ng-click="removeSystems(this)" ng-if="(battalion.status=='deployed' && battalion.systemStatus=='on' && battalion.systemMode=='manual')" class="btn btn-outline-danger btn-sm">Remove</button>
                                         <button type="button" ng-click="startSystems(this)"  ng-if="(battalion.status=='deployed' && battalion.systemStatus=='off' && battalion.systemMode=='manual')" class="btn btn-outline-success btn-sm">Start</button>
-                                        <button type="button" ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-warning btn-sm">Upgrade</button>
-                                        <div ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-success btn-sm"><a href="https://console-openshift-console.apps.cluster-zzmdz.dynamic.opentlc.com/topology/ns/battalion-{{ battalion.description }}?view=graph" target="_blank"> View </a></div>
-                                        
+                                        <button type="button" ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-warning btn-sm">Upgrade</button>                                        
+                                        <button ng-if="(battalion.systemStatus=='on')" ng-click="systemDetails(this)" class="btn btn-outline-success btn-sm"> View </button>
+
                                     </div>  
                                 </div>
-                                <div class="centerd-flex align-items-center justify-content-center">                                      
+                                <div class="centerd-flex align-items-center justify-content-center">       
                                     <div id="div-loading-{{ battalion.id }}" class="lds-ripple hidden"><div></div><div></div></div>
                                 </div>
                              </div>
@@ -330,14 +330,14 @@
       <!-- END MODAL Add Booking-->
 
     <!-- Modal Release Parking Lot -->
-    <div class="modal fade none-border" id="release-lot">
+    <div class="modal fade none-border" id="system-modal">
     <div class="modal-dialog">
         <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h4 class="modal-title">
-            <strong>Booking </strong>
-            <code>(Only for today)</code>
+            <strong>Battalion </strong>
+            <code>( {{currentBattalion.description}} )</code>
             </h4>
         </div>
         <div class="modal-body">
@@ -347,8 +347,20 @@
                 <div>
                     <h2><span id="lot-name"></span></h4>
                     <div class="card-content">
-                        <h5><i class="fa fa-check text-info"></i> will be booked from now untill you release it!</h5>
-                        <code>Please make sure you move your car before midnight!</code>
+                        <h5><i class="fa fa-check text-info"></i> You have {{systems.length}} pod[s] running!</h5>
+                        <table class="grid">
+                        <tr>
+                            <td ng-repeat="system in systems" class="pod" style="width: 100px;">   
+                            </td>
+                        </tr>
+                        <tr>
+                            <td ng-repeat="system in systems" class="notification-text" style="width: 100px;"> 
+                                {{system.metadata.name}}
+                            </td>
+                        </tr>
+                        
+                        </table>
+
                     </div>
                 </div>
                 </div>
@@ -358,7 +370,7 @@
         <div class="modal-footer">
             <input type="hidden" id="lot-id">
             <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-danger waves-effect waves-light save-category" data-dismiss="modal" ng-click="release()">Book</button>
+            <button type="button" class="btn btn-danger waves-effect waves-light save-category" data-dismiss="modal">Remove</button>
         </div>
         </div>
     </div>
@@ -424,6 +436,7 @@
 
         app.controller("ParkingManagementController", function ($scope, $http) {
             $scope.battalions = [];
+            $scope.systems = [];
             $scope.currentBattalion;
             var global_mode = 1;
             var global_parameter = "";
@@ -488,12 +501,24 @@
                 _refreshPageData(2)
             }
 
-            $scope.book = function(lot){
-                if(lot.lot.status == "Available") {
-                    $("#lot-name").html(lot.lot.name);
-                    $("#lot-id").val(lot.lot.id);
-                    $('#add-booking').modal('show');
-                }
+            $scope.systemDetails = function(battalion){
+                var method = "GET";
+                $scope.currentBattalion = battalion.battalion;
+                var url = 'https://api.cluster-zzmdz.dynamic.opentlc.com:6443/api/v1/namespaces/battalion-' + battalion.battalion.description + '/pods?labelSelector=app%3Dbattalion&limit=500';
+                $http({
+                    method: method,
+                    url: url,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization' : 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6InQ2SnNCbHZmNElQZXNqVUpYcWJHX1BDSXJVQ0NSUjRNU1ZqV0VEUHVtbWsifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZW1vLWNpY2QiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiYmF0dGFsaW9uLXRva2VuLXB0ZDZjIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImJhdHRhbGlvbiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImUzMGJhNGUxLTljNGItNGIwOC04N2RlLTU3ODliZmFkNTRhZSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZW1vLWNpY2Q6YmF0dGFsaW9uIn0.Tjv_AUa9LBAoIr0sOOaO6w1wsHk-n0E9jppu7WVuPfobXyLAfJDutcfQZSdHdJcBvCzpjRcNrbkKdVZm0qryGUOJBwgT46voLhkt_GHKGkMG2g7wgzEWib7Vto-H8vs64azORLtyzWch51Bbejm_WnDJrWHkhCimVRnasDJ-TCP0leskSkUsQfr0gr-PfqnTvlbHfOatkG7B-934XNgMyqGmuamjBCo9M2uI7O29YHsY9xN6bsEdeaomEdItZ9UuE4gTovMXzhHPlK-2-98XtKQCEIHn-VJpeqa6EmrCrCY_HrVbE5jU3aUg8Bp2VexYmRkarjeKYv6EjCqbLo8sFgHMjtvoCHCOwDdw-DM6hbpH4kFRhx6lYInNH6UID-yr4JYvQpP7A8T3vhuMo5oTyXbF_20l_e45Giv7aS4zfJ9_rzqtuip7r3Ir8dnsBW-ngYnpuPPCeTjogJajCrxzSFWu_Yq-UU5YonVByaIFu9bGYr7ffZb5YJG7dvrDkguwmYvqZK1TYWos8a59uxRQaQPa_jaEGcn83iqiBdWGi9wIwruSc3qWZwQYyk0WsKu6fia2wuUDlsXxBRd0x3XQPxfiePiBhYFSJi6KvLB5AWo6IGqQiqergnv-H_DOZajjAdUywaU_tGZWgEXSYo014dIWwhSKAsZBbtyBSGS7tFo'
+                    }
+                }).then(function successCallback(response) {
+                   console.log(response.data);
+                   $scope.systems = response.data.items;
+                   $('#system-modal').modal('show');
+                }, function errorCallback(response) {
+            
+                });
             }
 
             $scope.deploy = function(battalion){

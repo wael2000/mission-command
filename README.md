@@ -70,6 +70,7 @@ oc delete project battalion-zwarte-team
 
 
 
+https://api.cluster-zzmdz.dynamic.opentlc.com:6443/api/v1/namespaces/battalion-fox-team/pods?labelSelector=app%3Dbattalion&limit=500        
 
 https://api.cluster-zzmdz.dynamic.opentlc.com:6443/api/v1/namespaces/demo-cicd/pods?limit=500
 
