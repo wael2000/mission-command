@@ -118,19 +118,30 @@ public class BattalionController {
 
     @POST
     @Path("/onboard")
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.TEXT_PLAIN)
-    public String onboard(String body) {
+    public Battalion onboard(String body) {
+        System.out.println("==========================");
+        System.out.println(body);
         Map<String, String> paramMap = parseQueryString(body);
+        System.out.println("==========================");
+        //String team = paramMap.get("text").replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
         String team = paramMap.get("text");
+        for (int i = 0; i < team.length(); i++) {
+            char currentChar = team.charAt(i);
+            System.out.print(i  + "=" + currentChar + " ");
+        }
+        System.out.println("==========================");
+
         Battalion bat = service.getByName(team);
+        System.out.println(bat);
         // trigger the pipeline
         Map<String,String> payload = new HashMap<>();
         payload.put("battalion",bat.getDescription());
         payload.put("battalion_id",bat.id.toString());
         payload.put("action","deploy");
         pipelineProxyService.deploy(payload);
-        return "Success";
+        return bat;
         
     }
     
