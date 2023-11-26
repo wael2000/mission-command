@@ -65,5 +65,9 @@ public class BattalionService {
         return systems ;
     }
 
+    public Battalion getByName(String name){
+        return Battalion.find("Battalion.findByName",name).firstResult();
+    }
+
     
 }

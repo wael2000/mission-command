@@ -1,9 +1,10 @@
 package org.redhat.controller;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -11,13 +12,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
-
-import org.redhat.services.BattalionService;
 import org.redhat.model.Battalion;
-import org.redhat.services.PipelineProxyService;
+import org.redhat.services.BattalionService;
 import org.redhat.services.BuildPipelineProxyService;
+import org.redhat.services.PipelineProxyService;
 
 
 @Path("/battalion")
@@ -114,6 +113,23 @@ public class BattalionController {
     public Battalion setSystemMode(Battalion battalion) {
         return service.setSystemStatus(battalion);
     }
-    
+
+    @POST
+    @Path("/onboard")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Battalion onboard(String team) {
+        Battalion bat = service.getByName(team);
+        // trigger the pipeline
+        if(Battalion.DEPLOYED.equals( bat.getStatus()) && bat.getSystemMode().equals("manual")){
+            Map<String,String> payload = new HashMap<>();
+            payload.put("battalion",bat.getDescription());
+            payload.put("battalion_id",bat.id.toString());
+            payload.put("action","deploy");
+            pipelineProxyService.deploy(payload);
+        }
+        return bat;
+        
+    }
 
 }   
