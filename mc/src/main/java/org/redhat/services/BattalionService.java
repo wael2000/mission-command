@@ -65,8 +65,8 @@ public class BattalionService {
         return systems ;
     }
 
-    public Battalion getByName(String name){
-        return Battalion.find("Battalion.findByName",name).firstResult();
+    public Battalion getByName(String description){
+        return Battalion.findByDescription(description);
     }
 
     

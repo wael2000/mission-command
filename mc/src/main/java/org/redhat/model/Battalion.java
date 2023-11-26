@@ -18,7 +18,7 @@ import java.util.HashMap;
 @NamedQuery(name = "Battalion.findAll", query = "SELECT t FROM Battalion t", hints = @QueryHint(name = "org.hibernate.cacheable", value = "true"))
 @NamedQuery(name = "Battalion.findByStatus", query = "SELECT b FROM Battalion b where status=:status", hints = @QueryHint(name = "org.hibernate.cacheable", value = "true"))
 @NamedQuery(name = "Battalion.findSystemStatusByIds", query = "SELECT b FROM Battalion b where id in(:ids)", hints = @QueryHint(name = "org.hibernate.cacheable", value = "true"))
-@NamedQuery(name = "Battalion.findByName", query = "SELECT b FROM Battalion b where name=:name", hints = @QueryHint(name = "org.hibernate.cacheable", value = "true"))
+
 @Cacheable
 public class Battalion extends PanacheEntity {
     public static String STATIC = "static";
@@ -32,6 +32,10 @@ public class Battalion extends PanacheEntity {
 
     private String systemStatus="off";
     private String systemMode="auto";
+
+    public static Battalion findByDescription(String description){
+        return find("description", description).firstResult();
+    }
 
     public String getSystemStatus() {
         return systemStatus;

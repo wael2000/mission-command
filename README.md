@@ -61,12 +61,14 @@ oc delete application battalion-fox-team -n demo-cicd
 oc delete application battalion-hauk-team -n demo-cicd
 oc delete application battalion-mes-team -n demo-cicd
 oc delete application battalion-zwarte-team -n demo-cicd
+oc delete application battalion-blue -n demo-cicd
 
 oc delete project battalion-delta-team 
 oc delete project battalion-fox-team
 oc delete project battalion-hauk-team
 oc delete project battalion-mes-team
 oc delete project battalion-zwarte-team
+oc delete project battalion-blue
 
 
 

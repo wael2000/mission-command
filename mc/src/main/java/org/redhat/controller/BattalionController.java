@@ -119,17 +119,20 @@ public class BattalionController {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.TEXT_PLAIN)
     public Battalion onboard(String team) {
+        System.out.println("==========================");
+        System.out.println(team);
         Battalion bat = service.getByName(team);
+        System.out.println("==========================");
+        System.out.println(bat);
         // trigger the pipeline
-        if(Battalion.DEPLOYED.equals( bat.getStatus()) && bat.getSystemMode().equals("manual")){
-            Map<String,String> payload = new HashMap<>();
-            payload.put("battalion",bat.getDescription());
-            payload.put("battalion_id",bat.id.toString());
-            payload.put("action","deploy");
-            pipelineProxyService.deploy(payload);
-        }
+        Map<String,String> payload = new HashMap<>();
+        payload.put("battalion",bat.getDescription());
+        payload.put("battalion_id",bat.id.toString());
+        payload.put("action","deploy");
+        pipelineProxyService.deploy(payload);
         return bat;
         
     }
+    
 
 }   
