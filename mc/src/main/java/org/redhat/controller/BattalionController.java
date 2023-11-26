@@ -118,9 +118,9 @@ public class BattalionController {
 
     @POST
     @Path("/onboard")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.TEXT_PLAIN)
-    public Battalion onboard(String body) {
+    public String onboard(String body) {
         Map<String, String> paramMap = parseQueryString(body);
         String team = paramMap.get("text");
         Battalion bat = service.getByName(team);
@@ -130,7 +130,7 @@ public class BattalionController {
         payload.put("battalion_id",bat.id.toString());
         payload.put("action","deploy");
         pipelineProxyService.deploy(payload);
-        return bat;
+        return "Success";
         
     }
     
