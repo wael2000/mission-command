@@ -18,6 +18,8 @@ import org.redhat.services.BattalionService;
 import org.redhat.services.BuildPipelineProxyService;
 import org.redhat.services.PipelineProxyService;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 @Path("/battalion")
 public class BattalionController {
@@ -118,12 +120,10 @@ public class BattalionController {
     @Path("/onboard")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.TEXT_PLAIN)
-    public Battalion onboard(String team) {
-        System.out.println("==========================");
-        System.out.println(team);
+    public Battalion onboard(String body) {
+        Map<String, String> paramMap = parseQueryString(body);
+        String team = paramMap.get("text");
         Battalion bat = service.getByName(team);
-        System.out.println("==========================");
-        System.out.println(bat);
         // trigger the pipeline
         Map<String,String> payload = new HashMap<>();
         payload.put("battalion",bat.getDescription());
@@ -134,5 +134,24 @@ public class BattalionController {
         
     }
     
+    private static Map<String, String> parseQueryString(String query) {
+        Map<String, String> paramMap = new HashMap<>();
+
+        String[] pairs = query.split("&");
+        for (String pair : pairs) {
+            int idx = pair.indexOf("=");
+            //try {
+                //String key = URLDecoder.decode(pair.substring(0, idx), "UTF-8");
+                //String value = URLDecoder.decode(pair.substring(idx + 1), "UTF-8");
+                String key = pair.substring(0, idx);
+                String value = pair.substring(idx + 1,pair.length()-1);
+                paramMap.put(key, value);
+            //} catch (UnsupportedEncodingException e) {
+                //e.printStackTrace(); // Handle the exception according to your needs
+            //}
+        }
+
+        return paramMap;
+    }
 
 }   
