@@ -686,6 +686,7 @@
                 var url = 'https://{composite}/battalion/build';
                 $scope.currentBattalion = battalion.battalion;
                 var data = {  "id" : battalion.battalion.id  } ;
+                console.log(data);
                 $("#build-alert-" + battalion.battalion.id).show();
                 $http({
                     method: method,
