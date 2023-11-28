@@ -12,6 +12,17 @@ spec:
     resources: {}
     activeDeadlineSeconds: 21600
   triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - postgresql
+        from:
+          kind: ImageStreamTag
+          namespace: openshift
+          name: 'postgresql:10-el8'
+        lastTriggeredImage: >-
+          image-registry.openshift-image-registry.svc:5000/openshift/postgresql@sha256:a6185c259a6fc18fd59cb95e48d5d5b932f1fa86455950a99b715b7bcf3e99e3
     - type: ConfigChange
   replicas: 1
   revisionHistoryLimit: 10
@@ -20,9 +31,9 @@ spec:
     name: postgresql
   template:
     metadata:
+      creationTimestamp: null
       labels:
         name: postgresql
-        app: battalion          
     spec:
       volumes:
         - name: postgresql-data
@@ -80,7 +91,7 @@ spec:
               mountPath: /var/lib/pgsql/data
           terminationMessagePolicy: File
           image: >-
-            image-registry.openshift-image-registry.svc:5000/openshift/postgresql:latest
+            image-registry.openshift-image-registry.svc:5000/openshift/postgresql@sha256:a6185c259a6fc18fd59cb95e48d5d5b932f1fa86455950a99b715b7bcf3e99e3
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst
