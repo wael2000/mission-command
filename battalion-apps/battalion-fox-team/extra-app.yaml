@@ -12,17 +12,6 @@ spec:
     resources: {}
     activeDeadlineSeconds: 21600
   triggers:
-    - type: ImageChange
-      imageChangeParams:
-        automatic: true
-        containerNames:
-          - postgresql
-        from:
-          kind: ImageStreamTag
-          namespace: openshift
-          name: 'postgresql:10-el8'
-        lastTriggeredImage: >-
-          image-registry.openshift-image-registry.svc:5000/openshift/postgresql:latest
     - type: ConfigChange
   replicas: 1
   revisionHistoryLimit: 10
@@ -31,7 +20,6 @@ spec:
     name: postgresql
   template:
     metadata:
-      creationTimestamp: null
       labels:
         name: postgresql
         app: battalion          
