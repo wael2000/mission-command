@@ -451,11 +451,11 @@
                 var data = {};
                 method = "GET";
                 if(mode==1) {
-                    url = 'http://{composite}/battalion' + (parameter?'/status/' + parameter:'');
+                    url = 'https://{composite}/battalion' + (parameter?'/status/' + parameter:'');
                 } else if(mode==2) {
-                    url = 'http://{composite}/battalion/email/{email}';
+                    url = 'https://{composite}/battalion/email/{email}';
                 } else 
-                    url = 'http://{composite}/battalion/search/' + parameter;
+                    url = 'https://{composite}/battalion/search/' + parameter;
 
                 $http({
                     method: method,
@@ -524,7 +524,7 @@
 
             $scope.deploy = function(battalion){
                 var method = "POST";
-                var url = 'http://{composite}/battalion/status';
+                var url = 'https://{composite}/battalion/status';
                 if(battalion.battalion.systemMode=='auto')
                     $scope.currentBattalion = battalion.battalion;
                 else 
@@ -551,7 +551,7 @@
 
              $scope.startSystems = function(battalion){
                 var method = "POST";
-                var url = 'http://{composite}/battalion/deploy';
+                var url = 'https://{composite}/battalion/deploy';
                 $scope.currentBattalion = battalion.battalion;
                 var data = {  "id" : battalion.battalion.id, "status" : "deployed" } ;
                 $("#success-alert-" + battalion.battalion.id).show();
@@ -575,7 +575,7 @@
 
             $scope.removeSystems = function(battalion){
                 var method = "POST";
-                var url = 'http://{composite}/battalion/remove';
+                var url = 'https://{composite}/battalion/remove';
                 $scope.currentBattalion = battalion.battalion;
                 var data = {  "id" : battalion.battalion.id , "systemStatus" : "off"} ;
                 $("#success-alert-" + battalion.battalion.id).show();
@@ -599,7 +599,7 @@
 
             $scope.mobile = function(battalion){
                 var method = "POST";
-                var url = 'http://{composite}/battalion/status';
+                var url = 'https://{composite}/battalion/status';
                 var data = {  "id" : battalion.battalion.id, "status" : "mobile" } ;
                 $("#success-alert-" + battalion.battalion.id).show();
                 $http({
@@ -623,7 +623,7 @@
 
             $scope.dismount = function(battalion){
                 var method = "POST";
-                var url = 'http://{composite}/battalion/status';
+                var url = 'https://{composite}/battalion/status';
                 var data = {  "id" : battalion.battalion.id, "status" : "dismounted" } ;
                 $("#success-alert-" + battalion.battalion.id).show();
                 $http({
@@ -647,7 +647,7 @@
 
             $scope.submitBooking = function(){
                 var method = "POST";
-                var url = 'http://{composite}/booking';
+                var url = 'https://{composite}/booking';
                 var lot =  $("#lot-name").html();
                 var lotId =  $("#lot-id").val();
                 var data = { "lot" : { "id" : lotId } , "employee" : { "email" : '{email}'}};
@@ -684,7 +684,7 @@
 
             $scope.build = function(battalion){
                 var method = "POST";
-                var url = 'http://{composite}/battalion/build';
+                var url = 'https://{composite}/battalion/build';
                 $scope.currentBattalion = battalion.battalion;
                 var data = {  "id" : battalion.battalion.id  } ;
                 console.log(data);
@@ -726,7 +726,7 @@
             
 
             function connectToSystems(battalion) {
-                socket = new WebSocket("ws://{composite}/notify/" + battalion);
+                socket = new WebSocket("wss://{composite}/notify/" + battalion);
                 socket.onopen = function() {
                     console.log("Connected to the web socket");
                     //if($scope.currentBattalion && $scope.currentBattalion.id == battalion)
