@@ -33,8 +33,16 @@ public class Battalion extends PanacheEntity {
     private String systemStatus="off";
     private String systemMode="auto";
 
+    private double altitude;
+    private double longitude;
+    private double latitude;
+
     public static Battalion findByDescription(String description){
         return find("description", description).firstResult();
+    }
+
+    public static Battalion findById(long id){
+        return find("id", id).firstResult();
     }
 
     public String getSystemStatus() {
@@ -49,7 +57,30 @@ public class Battalion extends PanacheEntity {
     public void setSystemMode(String systemMode) {
         this.systemMode = systemMode;
     }
-   
+
+    public double getAltitude() {
+        return altitude;
+    }
+
+    public void setAltitude(double altitude) {
+        this.altitude = altitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     //@JsonbTransient 
