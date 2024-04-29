@@ -76,8 +76,8 @@ spec:
       runAfter:
         - code-analysis
       taskRef:
-        kind: ClusterTask
-        name: s2i-java
+        kind: Task
+        name: s2i-java-chains
       workspaces:
         - name: source
           workspace: source
@@ -183,6 +183,44 @@ spec:
             docker://image-registry.openshift-image-registry.svc:5000/demo-cicd/bgd:$(params.battalion)
         - name: destImageURL
           value: 'docker://quay.io/wael2000/bgd:$(params.battalion)'
+        - name: srcTLSverify
+          value: 'true'
+        - name: destTLSverify
+          value: 'true'
+      runAfter:
+        - build-image
+      taskRef:
+        kind: ClusterTask
+        name: skopeo-copy
+      workspaces:
+        - name: images-url
+          workspace: source
+    - name: skopeo-copy-sig
+      params:
+        - name: srcImageURL
+          value: >-
+            docker://image-registry.openshift-image-registry.svc:5000/demo-cicd/bgd:sha256-$(tasks.build-image.results.SIMPLE_DIGEST).sig
+        - name: destImageURL
+          value: 'docker://quay.io/wael2000/bgd:sha256-$(tasks.build-image.results.SIMPLE_DIGEST).sig'
+        - name: srcTLSverify
+          value: 'true'
+        - name: destTLSverify
+          value: 'true'
+      runAfter:
+        - build-image
+      taskRef:
+        kind: ClusterTask
+        name: skopeo-copy
+      workspaces:
+        - name: images-url
+          workspace: source
+    - name: skopeo-copy-att
+      params:
+        - name: srcImageURL
+          value: >-
+            docker://image-registry.openshift-image-registry.svc:5000/demo-cicd/bgd:sha256-$(tasks.build-image.results.SIMPLE_DIGEST).att
+        - name: destImageURL
+          value: 'docker://quay.io/wael2000/bgd:sha256-$(tasks.build-image.results.SIMPLE_DIGEST).att'
         - name: srcTLSverify
           value: 'true'
         - name: destTLSverify
