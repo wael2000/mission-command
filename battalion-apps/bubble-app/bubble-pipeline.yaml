@@ -176,6 +176,34 @@ spec:
       workspaces:
         - name: workspace
           workspace: source
+    - name: generate-sbom
+      taskRef:
+        name: generate-sbom
+      workspaces:
+        - name: source
+          workspace: source
+      runAfter:
+        - build-image
+      params:
+        - name: IMAGETOSCAN
+          value: "$(tasks.build-image.results.IMAGE_URL)@$(tasks.build-image.results.IMAGE_DIGEST)"
+        - name: SBOMFILE
+          value: "$(workspaces.source.path)/sbom.cdx"
+        - name: TLSVERIFY
+          value: "false"
+        - name: OUTPUT_IMAGE
+          value: "image-registry.openshift-image-registry.svc:5000/demo-cicd/bgd:sbom"
+    - name: vuln-scan
+      taskRef:
+        name: vulnerability-sbom
+      workspaces:
+        - name: source
+          workspace: source
+      runAfter:
+        - generate-sbom
+      params:
+        - name: SBOM
+          value: "$(workspaces.source.path)/sbom.cdx"
     - name: skopeo-copy
       params:
         - name: srcImageURL
@@ -227,6 +255,25 @@ spec:
           value: 'true'
       runAfter:
         - build-image
+      taskRef:
+        kind: ClusterTask
+        name: skopeo-copy
+      workspaces:
+        - name: images-url
+          workspace: source
+    - name: skopeo-copy-sbom
+      params:
+        - name: srcImageURL
+          value: >-
+            docker://image-registry.openshift-image-registry.svc:5000/demo-cicd/bgd:sbom
+        - name: destImageURL
+          value: 'docker://quay.io/wael2000/bgd:$(params.battalion)-sbom'
+        - name: srcTLSverify
+          value: 'true'
+        - name: destTLSverify
+          value: 'true'
+      runAfter:
+        - generate-sbom
       taskRef:
         kind: ClusterTask
         name: skopeo-copy
