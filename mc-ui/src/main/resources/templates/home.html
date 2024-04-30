@@ -237,7 +237,8 @@
 
                                     <div class="stat-content dib">
                                         <div class="stat-text">{{ battalion.name }} </div>
-                                        <div class="stat-digit">{{ battalion.description }} </div>                                                
+                                        <div class="stat-digit">{{ battalion.description }} </div>     
+                                        <div class="stat-text">{{ battalion.altitude }} {{ battalion.longitude }} {{ battalion.latitude }}</div>                                           
                                             <div class="stat-digit" ng-repeat="(key, value) in battalion.equipmentMap"> 
                                                 <div class="equipment {{  key }}">
                                                     {{  value }} 

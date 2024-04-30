@@ -13,6 +13,7 @@ import javax.transaction.Transactional;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.redhat.model.Battalion;
+import org.redhat.model.Coordinates;
 import org.redhat.model.Equipment;
 
 @ApplicationScoped
@@ -69,5 +70,18 @@ public class BattalionService {
         return Battalion.findByDescription(description);
     }
 
+    public Battalion getById(long id){
+        return Battalion.findById(id);
+    }
+
+    public void updateBattalionLocation(int id, Coordinates coordinates) {
+
+        Battalion battalion = getById(id);
+
+        battalion.setAltitude(coordinates.getAltitude());
+        battalion.setLongitude(coordinates.getLongitude());
+        battalion.setLatitude(coordinates.getLatitude());
+
+    }
     
 }

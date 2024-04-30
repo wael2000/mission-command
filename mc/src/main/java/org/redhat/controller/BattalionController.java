@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 import org.redhat.model.Battalion;
+import org.redhat.model.Coordinates;
 import org.redhat.services.BattalionService;
 import org.redhat.services.BuildPipelineProxyService;
 import org.redhat.services.PipelineProxyService;
@@ -41,6 +43,13 @@ public class BattalionController {
     @Produces(MediaType.APPLICATION_JSON)
     public Battalion[] battalis() {
         return service.getAll();
+    }
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Battalion battalion(@PathParam long id) {
+        return service.getById(id);
     }
 
     @GET
@@ -143,6 +152,17 @@ public class BattalionController {
         pipelineProxyService.deploy(payload);
         return "Success";
         
+    }
+
+    @POST
+    @Path("/location/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Transactional
+    public void updateBattalionLocation(@PathParam int id, Coordinates coordinates) {
+
+        service.updateBattalionLocation(id, coordinates);
+
     }
     
     private static Map<String, String> parseQueryString(String query) {
