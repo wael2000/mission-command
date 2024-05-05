@@ -22,10 +22,14 @@ import org.redhat.services.PipelineProxyService;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 
 @Path("/battalion")
 public class BattalionController {
-    
+    @ConfigProperty(name = "pipeline.enabled" , defaultValue="true" )
+    boolean pipelineEnabled;
+
     @Inject
     BattalionService service;
 
@@ -65,7 +69,9 @@ public class BattalionController {
     public Battalion setStatus(Battalion battalion) {
         Battalion bat = service.setStatus(battalion);
         // trigger the pipeline
-        if(Battalion.DEPLOYED.equals( bat.getStatus()) && bat.getSystemMode().equals("auto")){
+        System.out.print("======== pipelineEnabled ========= ");
+        System.out.println(pipelineEnabled);
+        if(pipelineEnabled && Battalion.DEPLOYED.equals( bat.getStatus()) && bat.getSystemMode().equals("auto")){
             Map<String,String> payload = new HashMap<>();
             payload.put("battalion",bat.getDescription());
             payload.put("battalion_id",bat.id.toString());

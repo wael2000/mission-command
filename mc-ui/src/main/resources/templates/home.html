@@ -451,11 +451,11 @@
                 var data = {};
                 method = "GET";
                 if(mode==1) {
-                    url = 'https://{composite}/battalion' + (parameter?'/status/' + parameter:'');
+                    url = 'http://{composite}/battalion' + (parameter?'/status/' + parameter:'');
                 } else if(mode==2) {
-                    url = 'https://{composite}/battalion/email/{email}';
+                    url = 'http://{composite}/battalion/email/{email}';
                 } else 
-                    url = 'https://{composite}/battalion/search/' + parameter;
+                    url = 'http://{composite}/battalion/search/' + parameter;
 
                 $http({
                     method: method,
