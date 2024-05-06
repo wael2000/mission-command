@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.redhat.model.Equipment;
+import org.redhat.model.Config;
 
 @Path("/system")
 public class EquipementController {
@@ -45,7 +46,9 @@ public class EquipementController {
     @Produces(MediaType.APPLICATION_JSON)
     public Map<String,Object> all() {
         Map<String,Object> map = new HashMap<>();
-        map.put("location",location);
+        Config config = Config.find("key", "dblocation").firstResult();
+        map.put("dblocation",config.getValue());
+        map.put("apilocation",location);
         map.put("system",system);
         map.put("equipments", Equipment.find("battalionId=?1 and type=?2",battalion,system).list());
         return map;

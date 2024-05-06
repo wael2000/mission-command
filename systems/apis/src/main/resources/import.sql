@@ -48,3 +48,5 @@ insert into equipment (id,name,code,type,status,battalion_id) values (47,'M1131'
 insert into equipment (id,name,code,type,status,battalion_id) values (48,'M1131','M1131-NL-048','Fire-Support','static',4);
 insert into equipment (id,name,code,type,status,battalion_id) values (49,'M1131','M1131-NL-049','Fire-Support','static',4);
 insert into equipment (id,name,code,type,status,battalion_id) values (50,'M1131','M1131-NL-050','Fire-Support','static',4);
+
+insert into config (id,key,value) values (1,'dblocation','DC');

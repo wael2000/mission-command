@@ -39,9 +39,10 @@
                     <div class="col-md-11">
                         <h5>Mission Command (Van het veld naar kantoor)</h5>
                         <h4> <span class="bg-primary round-widget"> {{ system }} </span> 
-                            <span class="more-link"> served from </span>
+                            <span class="user-avatar round-widget"> -- APIs --> </span>
                             <span class="bg-success round-widget"> {{apilocation}} </span> 
-                            <span class="more-link"> backend </span>
+                            <span class="user-avatar round-widget"> -- DB --> </span>
+                            <span class="bg-danger round-widget"> {{dblocation}} </span> 
                         </h4>
                     </div>
             </div>
@@ -153,6 +154,7 @@
             $scope.equipments = [];
             $scope.system = "";
             $scope.apilocation = "";
+            $scope.dblocation = "";
             _refreshPageData();
             function _refreshPageData() {
                 var method = "";
@@ -171,7 +173,8 @@
                 }).then(function successCallback(response) {
                     $scope.equipments = response.data.equipments;
                     $scope.system = response.data.system;
-                    $scope.apilocation = response.data.location;
+                    $scope.apilocation = response.data.apilocation;
+                    $scope.dblocation = response.data.dblocation;
 
                     $scope.equipments.forEach((equipment) => {
                         //connectToSystems(equipment.id);
@@ -215,13 +218,5 @@
         });
         
     </script>
-   
-    <script type="text/javascript"> 
-    $( document ).ready(function() {
-    }); 
-
-     
-    </script>
-
 </body>
 </html>
