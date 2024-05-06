@@ -9,7 +9,6 @@ spec:
       deployment: system
   template:
     metadata:
-      creationTimestamp: null
       labels:
         deployment: system
     spec:
