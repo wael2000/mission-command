@@ -63,7 +63,7 @@ spec:
       containers:
         - name: system
           image: >-
-            image-registry.openshift-image-registry.svc:5000/demo/fixed-wings@sha256:d12aec71d2f0ea897222b3481864d1055cf28c58bc0fd05974f00dcf7d70686b
+            image-registry.openshift-image-registry.svc:5000/demo/fixed-wings:latest
           ports:
             - containerPort: 8080
               protocol: TCP
