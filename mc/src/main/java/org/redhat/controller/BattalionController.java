@@ -20,8 +20,7 @@ import org.redhat.services.BattalionService;
 import org.redhat.services.BuildPipelineProxyService;
 import org.redhat.services.PipelineProxyService;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 

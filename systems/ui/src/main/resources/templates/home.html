@@ -161,7 +161,7 @@
                 var url = "";
                 var data = {};
                 method = "GET";
-                url = '{api}';
+                url = '/all';
                 $http({
                     method: method,
                     url: url,
@@ -175,10 +175,6 @@
                     $scope.system = response.data.system;
                     $scope.apilocation = response.data.apilocation;
                     $scope.dblocation = response.data.dblocation;
-
-                    $scope.equipments.forEach((equipment) => {
-                        //connectToSystems(equipment.id);
-                    });
                 }, function errorCallback(response) {
                     console.log(response.statusText);
                 });
@@ -192,29 +188,6 @@
             });
             $scope.$on('ngRepeatStarted', function (ngRepeatStartedEvent) {
             });
-          
-            function connectToSystems(battalion) {
-                socket = new WebSocket("wss://composite/notify/" + battalion);
-                socket.onopen = function() {
-                    console.log("Connected to the web socket");
-                };
-                socket.onmessage =function(m) {
-                    console.log("Got message: " + m.data);
-                    const tokens = m.data.split(',');
-                    $scope.battalions.forEach((battalion) => {
-                        if(battalion.id==tokens[0])
-                            battalion.systemStatus=tokens[1];
-                    });
-                    $("#div-b-"+tokens[0]).attr('class', 'card-' + tokens[1]);
-                    $("#div-s-"+tokens[0]).text(tokens[1]);
-                    $("#td-b-"+tokens[0]).attr('class', 'card-' + tokens[1]);
-                    $("#td-s-"+tokens[0]).text(tokens[1]);
-                    $("#div-loading-"+tokens[0]).hide();
-                    $scope.currentBattalion = null;
-                };
-            }   
-
-
         });
         
     </script>
