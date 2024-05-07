@@ -1,0 +1,20 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: mc
+  labels:
+    app: mc
+spec:
+  ipFamilies:
+    - IPv4
+  ports:
+    - name: 8080-tcp
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  internalTrafficPolicy: Cluster
+  type: ClusterIP
+  ipFamilyPolicy: SingleStack
+  sessionAffinity: None
+  selector:
+    app: mc

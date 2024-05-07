@@ -53,11 +53,7 @@ public class NotificationController {
     /* 
     @OnMessage
     public void onMessage(String message, @PathParam("battalion") String battalion) {
-        if (message.equalsIgnoreCase("_ready_")) {
-            broadcast("battalion " + battalion + " joined");
-        } else {
-            broadcast(">> " + battalion + ": " + message);
-        }
+        broadcast();
     }*/
 
     

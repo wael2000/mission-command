@@ -1,0 +1,93 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: mc
+  labels:
+    app: mc
+    app.kubernetes.io/part-of: mission-command
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mc
+  template:
+    metadata:
+      labels:
+        app: mc
+    spec:
+      volumes:
+        - name: data-volume
+          configMap:
+            name: db-config
+            defaultMode: 420
+      initContainers:
+        - name: init-createdb
+          image: 'postgres:14'
+          command:
+            - psql
+            - 'postgresql://postgres:postgres@postgresql'
+            - '-f'
+            - /etc/dbvolume/create_database.sql
+          resources: {}
+          volumeMounts:
+            - name: data-volume
+              mountPath: /etc/dbvolume
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+        - name: init-builddb
+          image: 'postgres:14'
+          command:
+            - psql
+            - 'postgresql://postgres:postgres@postgresql/battalion'
+            - '-f'
+            - /etc/dbvolume/build_tables.sql
+          resources: {}
+          volumeMounts:
+            - name: data-volume
+              mountPath: /etc/dbvolume
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+        - name: init-populatedb
+          image: 'postgres:14'
+          command:
+            - psql
+            - 'postgresql://postgres:postgres@postgresql/battalion'
+            - '-f'
+            - /etc/dbvolume/data.sql
+          resources: {}
+          volumeMounts:
+            - name: data-volume
+              mountPath: /etc/dbvolume
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent                  
+      containers:
+        - name: mc
+          image: 'image-registry.openshift-image-registry.svc:5000/demo/mc:latest'
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: cors.origin
+              value: 'http://mc-ui-route-demo.apps.cluster-f44mq.dynamic.redhatworkshops.io'
+            - name: pipeline.el
+              value: 'http://dummy'
+            - name: build.pipeline.el
+              value: 'http://dummy'
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600

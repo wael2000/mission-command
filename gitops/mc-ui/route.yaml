@@ -1,0 +1,12 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: mc-ui-route
+  labels:
+    app: mc-ui
+spec:
+  to:
+    kind: Service
+    name: mc-ui
+  port:
+    targetPort: 8080-tcp

@@ -726,7 +726,7 @@
             
 
             function connectToSystems(battalion) {
-                socket = new WebSocket("wss://{composite}/notify/" + battalion);
+                socket = new WebSocket("ws://{composite}/notify/" + battalion);
                 socket.onopen = function() {
                     console.log("Connected to the web socket");
                     //if($scope.currentBattalion && $scope.currentBattalion.id == battalion)

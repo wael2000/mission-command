@@ -1,0 +1,42 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: mc-ui
+  labels:
+    app: mc-ui
+    app.kubernetes.io/part-of: mission-command
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mc-ui
+  template:
+    metadata:
+      labels:
+        app: mc-ui
+    spec:
+      containers:
+        - name: mc-ui
+          image: 'image-registry.openshift-image-registry.svc:5000/demo/mc-ui:latest'
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: battalionService.url
+              value: mc-route-demo.apps.cluster-f44mq.dynamic.redhatworkshops.io
+            - name: ocp.api.url
+              value: 'https://api.cluster-f44mq.dynamic.redhatworkshops.io:6443'
+          resources: {}
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
