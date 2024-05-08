@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: mc-ui
-          image: 'image-registry.openshift-image-registry.svc:5000/demo/mc-ui:latest'
+          image: 'image-registry.openshift-image-registry.svc:5000/mc/mc-ui:latest'
           ports:
             - containerPort: 8080
               protocol: TCP

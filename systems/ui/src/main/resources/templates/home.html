@@ -59,7 +59,7 @@
                         <div class="col-lg-2 col-md-3 col-sm-3" ng-repeat="equipment in equipments | orderBy:'-id'" on-finish-render="callRenderFinished()" on-start-render="callRenderStarted()">
                             <div class="card">
                                 <div class="stat-widget-one">
-                                    <div class="stat-icon dib">
+                                    <div class="equipment {{equipment.type}}">
                                         <i ng-if="(equipment.status=='static')" class="ti-map-alt"></i>
                                         <i ng-if="(equipment.status=='deployed')" class="ti-direction-alt"></i>
                                         <i ng-if="(equipment.status=='mobile')" class="ti-target"></i>

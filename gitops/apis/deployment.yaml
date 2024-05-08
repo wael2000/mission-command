@@ -63,7 +63,7 @@ spec:
           imagePullPolicy: IfNotPresent
       containers:
         - name: apis
-          image: 'image-registry.openshift-image-registry.svc:5000/demo/apis:latest'
+          image: 'image-registry.openshift-image-registry.svc:5000/mc/apis:latest'
           ports:
             - containerPort: 8080
               protocol: TCP
@@ -75,7 +75,7 @@ spec:
             - name: system
               value: Fixed-Wing
             - name: cors.origin
-              value: 'http://ui-route-demo.apps.cluster-f44mq.dynamic.redhatworkshops.io'
+              value: 'http://ui-route-mc.apps.cluster-f44mq.dynamic.redhatworkshops.io'
           imagePullPolicy: IfNotPresent
       restartPolicy: Always
   strategy:
