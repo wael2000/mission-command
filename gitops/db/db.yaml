@@ -3,6 +3,7 @@ apiVersion: apps.openshift.io/v1
 metadata:
   annotations:
     template.alpha.openshift.io/wait-for-ready: 'true'
+    argocd.argoproj.io/sync-wave: "2"
   name: postgresql
   labels:
     template: postgresql-ephemeral-template
