@@ -15,57 +15,9 @@ spec:
       labels:
         app: mc
     spec:
-      volumes:
-        - name: data-volume
-          configMap:
-            name: db-config
-            defaultMode: 420
-      initContainers:
-        - name: init-createdb
-          image: 'postgres:14'
-          command:
-            - psql
-            - 'postgresql://postgres:postgres@postgresql'
-            - '-f'
-            - /etc/dbvolume/create_database.sql
-          resources: {}
-          volumeMounts:
-            - name: data-volume
-              mountPath: /etc/dbvolume
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-          imagePullPolicy: IfNotPresent
-        - name: init-builddb
-          image: 'postgres:14'
-          command:
-            - psql
-            - 'postgresql://postgres:postgres@postgresql/battalion'
-            - '-f'
-            - /etc/dbvolume/build_tables.sql
-          resources: {}
-          volumeMounts:
-            - name: data-volume
-              mountPath: /etc/dbvolume
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-          imagePullPolicy: IfNotPresent
-        - name: init-populatedb
-          image: 'postgres:14'
-          command:
-            - psql
-            - 'postgresql://postgres:postgres@postgresql/battalion'
-            - '-f'
-            - /etc/dbvolume/data.sql
-          resources: {}
-          volumeMounts:
-            - name: data-volume
-              mountPath: /etc/dbvolume
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-          imagePullPolicy: IfNotPresent                  
       containers:
         - name: mc
-          image: 'image-registry.openshift-image-registry.svc:5000/mc/mc:latest'
+          image: 'image-registry.openshift-image-registry.svc:5000/openshift/mc:latest'
           ports:
             - containerPort: 8080
               protocol: TCP

@@ -98,27 +98,6 @@ spec:
       securityContext: {}
       schedulerName: default-scheduler
 ---
-kind: Service
-apiVersion: v1
-metadata:
-  name: postgresql
-  labels:
-    template: postgresql-ephemeral-template
-spec:
-  ipFamilies:
-    - IPv4
-  ports:
-    - name: postgresql
-      protocol: TCP
-      port: 5432
-      targetPort: 5432
-  internalTrafficPolicy: Cluster
-  type: ClusterIP
-  ipFamilyPolicy: SingleStack
-  sessionAffinity: None
-  selector:
-    name: postgresql
----
 kind: Secret
 apiVersion: v1
 metadata:
