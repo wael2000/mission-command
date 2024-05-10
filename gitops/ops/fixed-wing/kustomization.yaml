@@ -19,13 +19,6 @@ patches:
     name: apis
 - patch: |-
     - op: replace
-      path: /spec/to/name
-      value: fixed-wing-apis
-  target:
-    kind: Route
-    name: apis
-- patch: |-
-    - op: replace
       path: /metadata/name
       value: fixed-wing-ui
   target:
