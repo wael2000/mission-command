@@ -43,7 +43,7 @@ spec:
               value: DC
             - name: system1
               value: Fixed-Wing
-            - name: cors.origin1
+            - name: cors.origin
               value: 'http://dummy'
           imagePullPolicy: IfNotPresent
       restartPolicy: Always
