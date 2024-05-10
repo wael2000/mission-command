@@ -25,15 +25,16 @@ rules:
 
 # add pipeline service account of the project where the pipeline runs to this role 
 
-oc adm policy add-cluster-role-to-user namespaces-manager system:serviceaccount:command-post:pipeline
+oc adm policy add-cluster-role-to-user namespaces-manager system:serviceaccount:mc-datacenter:pipeline
 
 # add cluster-reader role
-oc adm policy add-cluster-role-to-user cluster-reader system:serviceaccount:command-post:pipeline
+oc adm policy add-cluster-role-to-user cluster-reader system:serviceaccount:mc-datacenter:pipeline
 
+oc policy add-role-to-user admin system:serviceaccount:mc-datacenter:pipeline
 
 oc adm policy \
     add-cluster-role-to-user self-provisioner \
-    system:serviceaccount:command-post:pipeline
+    system:serviceaccount:mc-datacenter:pipeline
 
 
 

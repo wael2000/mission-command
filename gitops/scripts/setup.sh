@@ -47,7 +47,6 @@ PP "AWS" " URL=  $AWS_URL"  " TOKEN= $AWS_TOEKN"
 
 # add project to GitOps 
 oc label ns mc-datacenter argocd.argoproj.io/managed-by=openshift-gitops --overwrite
-
 # Gitops permissions 
 # create ocp-admins group
 oc adm groups new cluster-admins
@@ -56,8 +55,6 @@ oc adm policy add-cluster-role-to-group cluster-admin cluster-admins
 # add username to ocp-admins group
 oc adm groups add-users cluster-admins admin
 
-
-Unable to create application: application spec for db is invalid: InvalidSpecError: Unable to generate manifests in gitops/db: rpc error: code = Unknown desc = gitops/db: app path does not exist
 
 
 #oc login --token=$AZURE_TOKEN --server=$AZURE_URL --insecure-skip-tls-verify=true
