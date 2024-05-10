@@ -23,8 +23,7 @@ spec:
               protocol: TCP
           env:
             - name: apiurl
-              value: >-
-                http://apis-route-demo.apps.cluster-f44mq.dynamic.redhatworkshops.io/system
+              value: apis
           imagePullPolicy: IfNotPresent
       restartPolicy: Always
       terminationGracePeriodSeconds: 30

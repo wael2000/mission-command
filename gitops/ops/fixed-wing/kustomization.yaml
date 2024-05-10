@@ -30,3 +30,12 @@ patches:
   target:
     kind: Route
     name: ui
+- patch: |-
+    - op: replace
+      path: "/spec/template/spec/containers/0/env/1"
+      value:
+        name: apiurl
+        value: "fixed-wing-apis"
+  target:
+    kind: Deployment
+    name: ui
