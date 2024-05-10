@@ -22,7 +22,7 @@ patches:
       path: /metadata/labels/app.kubernetes.io~1part-of
       value: rotary-wing
     - op: replace
-      path: /selector/app
+      path: /spec/selector/app
       value: rotary-wing-apis
   target:
     name: apis
