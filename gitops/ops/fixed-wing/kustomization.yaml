@@ -15,6 +15,12 @@ patches:
     - op: replace
       path: /metadata/name
       value: fixed-wing-apis
+    - op: replace
+      path: /metadata/labes/app
+      value: fixed-wing-apis
+    - op: replace
+      path: /metadata/labes/app.kubernetes.io/part-of
+      value: fixed-wing-apis
   target:
     name: apis
 - patch: |-
