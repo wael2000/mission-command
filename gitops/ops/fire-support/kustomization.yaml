@@ -20,3 +20,12 @@ patches:
     kind: Deployment
     name: apis
     version: v1
+- patch: |-
+    - op: replace
+      path: /metadata/name
+      value: fixed-wing-ui
+  target:
+    group: apps
+    kind: Deployment
+    name: ui
+    version: v1
