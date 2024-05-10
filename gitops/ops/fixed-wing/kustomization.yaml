@@ -8,13 +8,13 @@ configMapGenerator:
   literals:
   - battalion=1
   - location=AWS
-  - system=Fire-Support
-  - app_name=fire-support
+  - system=Fixed-Wing
+  - app_name=fixed-wing
 patches:
 - patch: |-
     - op: replace
       path: /metadata/name
-      value: fire-support-apis
+      value: fixed-wing-apis
   target:
     group: apps
     kind: Deployment
@@ -23,7 +23,7 @@ patches:
 - patch: |-
     - op: replace
       path: /metadata/name
-      value: fire-aupport-ui
+      value: fixed-wing-ui
   target:
     group: apps
     kind: Deployment
