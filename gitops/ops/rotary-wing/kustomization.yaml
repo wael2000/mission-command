@@ -48,10 +48,17 @@ patches:
       value: rotary-wing-apis
     - op: replace
       path: /spec/selector/matchLabels/app
-      value: rotary-wing-apis
+      value: rotary-wing-ui
   target:
     kind: Deployment
     name: ui
+- patch: |-
+    - op: replace
+      path: /spec/selector/matchLabels/app
+      value: rotary-wing-apis
+  target:
+    kind: Deployment
+    name: apis
 - patch: |-
     - op: replace
       path: /spec/selector/app
