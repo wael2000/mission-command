@@ -30,13 +30,12 @@ oc adm policy add-cluster-role-to-user namespaces-manager system:serviceaccount:
 # add cluster-reader role
 oc adm policy add-cluster-role-to-user cluster-reader system:serviceaccount:mc-datacenter:pipeline
 
-oc policy add-role-to-user admin system:serviceaccount:mc-datacenter:pipeline
-
 oc adm policy \
     add-cluster-role-to-user self-provisioner \
     system:serviceaccount:mc-datacenter:pipeline
 
 
+oc policy add-role-to-user admin system:serviceaccount:mc-datacenter:pipeline
 
 
 curl -XPOST -k -d '{"id" : "1", "systemStatus" : "on"}' https://mission-command-service-command-post.apps.cluster-fdbd4.dynamic.opentlc.com/battalion/system  -H 'Content-Type: application/json' -v

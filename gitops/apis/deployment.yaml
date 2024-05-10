@@ -29,7 +29,7 @@ spec:
             - name: system
               value: Fixed-Wing
             - name: cors.origin
-              value: 'http://ui-route-mc.apps.cluster-f44mq.dynamic.redhatworkshops.io'
+              value: 'http://dummy'
           imagePullPolicy: IfNotPresent
       restartPolicy: Always
   strategy:

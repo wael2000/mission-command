@@ -3,3 +3,14 @@ kind: Kustomization
 resources:
 - deployment.yaml
 - service.yaml
+replacements:
+- source:
+      kind: ConfigMap
+      name: app-config
+      fieldPath: location
+  targets:
+    - select:
+        kind: Deployment
+        name: apis
+      fieldPaths:
+        - spec.template.spec.containers.[name=apis].env.[name=location].value

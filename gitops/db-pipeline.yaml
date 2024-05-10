@@ -1,0 +1,143 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: battalion-db
+spec:
+  params:
+    - default: blue
+      description: battalion name
+      name: battalion
+      type: string
+    - default: '0'
+      description: battalion id
+      name: battalion_id
+      type: string
+    - default: deploy
+      description: action
+      name: action
+      type: string
+  tasks:
+    - name: git-clone
+      params:
+        - name: url
+          value: 'https://github.com/wael2000/mission-command'
+        - name: revision
+          value: main
+        - name: refspec
+          value: ''
+        - name: submodules
+          value: 'true'
+        - name: depth
+          value: '1'
+        - name: sslVerify
+          value: 'true'
+        - name: crtFileName
+          value: ca-bundle.crt
+        - name: subdirectory
+          value: ''
+        - name: sparseCheckoutDirectories
+          value: ''
+        - name: deleteExisting
+          value: 'true'
+        - name: httpProxy
+          value: ''
+        - name: httpsProxy
+          value: ''
+        - name: noProxy
+          value: ''
+        - name: verbose
+          value: 'true'
+        - name: gitInitImage
+          value: >-
+            registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:9b14f52b21d29d8d83ea4c0e78623debc954f1a732d2be6d1a7269fbba23b1a4
+        - name: userHome
+          value: /home/git
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: source
+    - name: create-project
+      params:
+        - name: SCRIPT
+          value: 'oc new-project battalion-$(params.battalion) '
+        - name: VERSION
+          value: latest
+      runAfter:
+        - git-clone
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      when:
+        - input: $(params.action)
+          operator: in
+          values:
+            - deploy
+    - name: add-to-manage-scope
+      params:
+        - name: SCRIPT
+          value: >-
+            oc label ns battalion-$(params.battalion)
+            argocd.argoproj.io/managed-by=openshift-gitops
+        - name: VERSION
+          value: latest
+      runAfter:
+        - create-project
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      when:
+        - input: $(params.action)
+          operator: in
+          values:
+            - deploy
+      workspaces:
+        - name: manifest-dir
+          workspace: source
+    - name: deploy-application
+      params:
+        - name: SCRIPT
+          value: >-
+            sed 's/BATTALION/$(params.battalion)/g' gitops/db-application.yaml |
+            oc create -f - -n openshift-gitops
+        - name: VERSION
+          value: latest
+      runAfter:
+        - add-to-manage-scope
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      when:
+        - input: $(params.action)
+          operator: in
+          values:
+            - deploy
+      workspaces:
+        - name: manifest-dir
+          workspace: source
+    - name: remove-the-app
+      params:
+        - name: SCRIPT
+          value: >-
+            oc delete application $(params.battalion)-db -n openshift-gitops |
+            oc delete project  battalion-$(params.battalion) 
+        - name: VERSION
+          value: latest
+      runAfter:
+        - git-clone
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      when:
+        - input: $(params.action)
+          operator: in
+          values:
+            - remove
+      workspaces:
+        - name: manifest-dir
+          workspace: source
+  workspaces:
+    - name: source
+      optional: false
+  finally: []
