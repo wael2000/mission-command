@@ -75,7 +75,7 @@ patches:
 - patch: |-
     - op: replace
       path: /spec/selector/app
-      value: fixed-wing-ui
+      value: rotary-wing-ui
   target:
     kind: Service
     name: ui
