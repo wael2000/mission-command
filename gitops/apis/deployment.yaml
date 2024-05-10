@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: apis
-          image: 'image-registry.openshift-image-registry.svc:5000/openshift/apis:latest'
+          image: 'quay.io/wael2000/apis:latest'
           ports:
             - containerPort: 8080
               protocol: TCP
