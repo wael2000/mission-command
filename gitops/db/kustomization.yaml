@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
 - db-config.yaml
 - db.yaml
-- db-job.yaml
 configMapGenerator:
   - name: db-config
     behavior: replace
