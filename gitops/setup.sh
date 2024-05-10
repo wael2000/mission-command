@@ -61,3 +61,4 @@ Unable to create application: application spec for db is invalid: InvalidSpecErr
 
 
 #oc login --token=$AZURE_TOKEN --server=$AZURE_URL --insecure-skip-tls-verify=true
+

@@ -20,7 +20,7 @@ spec:
             name: db-config
             defaultMode: 420    
       containers:
-      - name: init-createdb
+      - name: initcreatedb
         image: 'postgres:14'
         command:
           - psql
@@ -34,7 +34,7 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         imagePullPolicy: IfNotPresent
-      - name: init-builddb
+      - name: initbuilddb
         image: 'postgres:14'
         command: ["/bin/sh","-c"]
         args: ["sleep 3; psql postgresql://postgres:postgres@postgresqldb/battalion -f /etc/dbvolume/build_tables.sql"]
@@ -45,7 +45,7 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         imagePullPolicy: IfNotPresent
-      - name: init-populatedb
+      - name: initpopulatedb
         image: 'postgres:14'
         command: ["/bin/sh","-c"]
         args: ["sleep 6; psql postgresql://postgres:postgres@postgresqldb/battalion -f /etc/dbvolume/data.sql"]
@@ -56,7 +56,7 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         imagePullPolicy: IfNotPresent
-      - name: init-populateConfig
+      - name: initpopulateConfig
         image: 'postgres:14'
         command: ["/bin/sh","-c"]
         args: ["sleep 9; psql postgresql://postgres:postgres@postgresqldb/battalion -f /etc/dbvolume/config.sql"]
