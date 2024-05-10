@@ -22,13 +22,28 @@ spec:
             - containerPort: 8080
               protocol: TCP
           env:
-            - name: battalion
-              value: '1'
             - name: location
-              value: DC
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: location
+            - name: battalion
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: battalion
             - name: system
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: system
+            - name: battalion1
+              value: '1'
+            - name: location1
+              value: DC
+            - name: system1
               value: Fixed-Wing
-            - name: cors.origin
+            - name: cors.origin1
               value: 'http://dummy'
           imagePullPolicy: IfNotPresent
       restartPolicy: Always
