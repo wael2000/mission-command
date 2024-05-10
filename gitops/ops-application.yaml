@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: BATTALION-SYSTEM-ops
+  name: BATTALION-APP_NAME-ops
 spec:
   destination:
     namespace: battalion-BATTALION
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: gitops/ops
+    path: gitops/ops/APP_NAME
     repoURL: https://github.com/wael2000/mission-command
     targetRevision: main
   syncPolicy:

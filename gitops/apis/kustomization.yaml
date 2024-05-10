@@ -3,9 +3,3 @@ kind: Kustomization
 resources:
 - deployment.yaml
 - service.yaml
-configMapGenerator:
-- name: app-config
-  literals:
-  - battalion=1
-  - location=AWS
-  - system=Rotary-Wing
