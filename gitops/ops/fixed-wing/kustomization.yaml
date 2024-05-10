@@ -59,6 +59,9 @@ patches:
     - op: replace
       path: /spec/selector/matchLabels/app
       value: fixed-wing-apis
+    - op: replace
+      path: /spec/template/metadata/labels/app
+      value: fixed-wing-apis            
   target:
     kind: Deployment
     name: apis
@@ -66,9 +69,6 @@ patches:
     - op: replace
       path: /spec/selector/app
       value: fixed-wing-apis
-    - op: replace
-      path: /spec/template/metadata/labels/app
-      value: fixed-wing-apis      
   target:
     kind: Service
     name: apis
