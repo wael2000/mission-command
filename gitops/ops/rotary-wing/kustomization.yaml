@@ -72,3 +72,10 @@ patches:
   target:
     kind: Service
     name: apis
+- patch: |-
+    - op: replace
+      path: /spec/selector/app
+      value: fixed-wing-ui
+  target:
+    kind: Service
+    name: ui
