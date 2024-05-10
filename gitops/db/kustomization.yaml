@@ -4,8 +4,3 @@ resources:
 - db-config.yaml
 - db.yaml
 - db-job.yaml
-configMapGenerator:
-  - name: db-config
-    behavior: replace
-    literals:
-      - config.sql=insert into config (id,key,value) values (1,'dblocation','AWS');
