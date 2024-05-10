@@ -6,6 +6,6 @@ resources:
 configMapGenerator:
 - name: app-config
   literals:
-  - battalion=blue
+  - battalion=1
   - location=AWS
   - system=Rotary-Wing
