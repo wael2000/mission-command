@@ -2,8 +2,8 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: db-config
-    annotations:
-      argocd.argoproj.io/sync-wave: "1"
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 data:
   build_tables.sql: |-
     alter table if exists Equipment drop constraint if exists FKs0a4mt3q33w668cpumbxobvy2;
