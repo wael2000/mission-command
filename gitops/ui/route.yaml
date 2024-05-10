@@ -4,6 +4,7 @@ metadata:
   name: ui
   labels:
     app: ui
+    app.kubernetes.io/part-of: system
 spec:
   to:
     kind: Service
