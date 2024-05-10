@@ -18,9 +18,6 @@ patches:
     - op: replace
       path: /metadata/labels/app
       value: fixed-wing-apis
-    - op: replace
-      path: metadata.labels[app.kubernetes.io/part-of]
-      value: fixed-wing      
   target:
     name: apis
 - patch: |-
@@ -30,9 +27,6 @@ patches:
     - op: replace
       path: /metadata/labels/app
       value: fixed-wing-ui
-    - op: replace
-      path: metadata.labels[app.kubernetes.io/part-of]
-      value: fixed-wing
   target:
     name: ui
 - patch: |-
