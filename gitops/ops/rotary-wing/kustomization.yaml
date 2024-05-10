@@ -15,12 +15,24 @@ patches:
     - op: replace
       path: /metadata/name
       value: rotary-wing-apis
+    - op: replace
+      path: /metadata/labels/app
+      value: rotary-wing-apis
+    - op: replace
+      path: /metadata/labels/app.kubernetes.io~1part-of
+      value: rotary-wing
   target:
     name: apis
 - patch: |-
     - op: replace
       path: /metadata/name
       value: rotary-wing-ui
+    - op: replace
+      path: /metadata/labels/app
+      value: rotary-wing-ui
+    - op: replace
+      path: /metadata/labels/app.kubernetes.io~1part-of
+      value: rotary-wing      
   target:
     name: ui
 - patch: |-
