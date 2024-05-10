@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: db
+  name: BATTALION-db
 spec:
   destination:
     namespace: battalion-BATTALION
