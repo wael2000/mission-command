@@ -3,7 +3,7 @@ apiVersion: apps.openshift.io/v1
 metadata:
   annotations:
     template.alpha.openshift.io/wait-for-ready: 'true'
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "1"
   name: postgresql
   labels:
     template: postgresql-ephemeral-template
@@ -108,3 +108,22 @@ data:
   database-password: cG9zdGdyZXM=
   database-user: cG9zdGdyZXM=
 type: Opaque
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: postgresqldb
+spec:
+  ipFamilies:
+    - IPv4
+  ports:
+    - name: postgresqldb
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+  internalTrafficPolicy: Cluster
+  type: ClusterIP
+  ipFamilyPolicy: SingleStack
+  sessionAffinity: None
+  selector:
+    name: postgresql

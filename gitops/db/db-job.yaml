@@ -1,28 +1,9 @@
-kind: Service
-apiVersion: v1
-metadata:
-  name: postgresqldb
-  annotations:
-    argocd.argoproj.io/sync-wave: "4"  
-spec:
-  ipFamilies:
-    - IPv4
-  ports:
-    - name: postgresqldb
-      protocol: TCP
-      port: 5432
-      targetPort: 5432
-  internalTrafficPolicy: Cluster
-  type: ClusterIP
-  ipFamilyPolicy: SingleStack
-  sessionAffinity: None
-  selector:
-    name: postgresql
----
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: db-config
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"  
 spec:
   parallelism: 1    
   completions: 1    

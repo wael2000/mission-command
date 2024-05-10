@@ -3,7 +3,7 @@ apiVersion: v1
 metadata:
   name: db-config
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "2"
 data:
   build_tables.sql: |-
     alter table if exists Equipment drop constraint if exists FKs0a4mt3q33w668cpumbxobvy2;
