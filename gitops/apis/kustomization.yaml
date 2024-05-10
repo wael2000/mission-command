@@ -8,4 +8,4 @@ configMapGenerator:
   literals:
   - battalion=blue
   - location=AWS
-  - System=Rotary-Wing
+  - system=Rotary-Wing
