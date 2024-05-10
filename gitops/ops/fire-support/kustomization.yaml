@@ -9,73 +9,73 @@ configMapGenerator:
   - battalion=1
   - location=AWS
   - system=Fire-Support
-  - app_name=file-support
+  - app_name=fire-support
 patches:
 - patch: |-
     - op: replace
       path: /metadata/name
-      value: file-support-apis
+      value: fire-support-apis
     - op: replace
       path: /metadata/labels/app
-      value: file-support-apis
+      value: fire-support-apis
     - op: replace
       path: /metadata/labels/app.kubernetes.io~1part-of
-      value: file-support
+      value: fire-support
   target:
     name: apis
 - patch: |-
     - op: replace
       path: /metadata/name
-      value: file-support-ui
+      value: fire-support-ui
     - op: replace
       path: /metadata/labels/app
-      value: file-support-ui
+      value: fire-support-ui
     - op: replace
       path: /metadata/labels/app.kubernetes.io~1part-of
-      value: file-support
+      value: fire-support
   target:
     name: ui
 - patch: |-
     - op: replace
       path: /spec/to/name
-      value: file-support-ui
+      value: fire-support-ui
   target:
     kind: Route
     name: ui
 - patch: |-
     - op: replace
       path: /spec/template/spec/containers/0/env/0/value
-      value: file-support-apis
+      value: fire-support-apis
     - op: replace
       path: /spec/selector/matchLabels/app
-      value: file-support-ui
+      value: fire-support-ui
     - op: replace
       path: /spec/template/metadata/labels/app
-      value: file-support-ui
+      value: fire-support-ui
   target:
     kind: Deployment
     name: ui
 - patch: |-
     - op: replace
       path: /spec/selector/matchLabels/app
-      value: file-support-apis
+      value: fire-support-apis
     - op: replace
       path: /spec/template/metadata/labels/app
-      value: file-support-apis
+      value: fire-support-apis
   target:
     kind: Deployment
     name: apis
 - patch: |-
     - op: replace
       path: /spec/selector/app
-      value: file-support-apis
+      value: fire-support-apis
   target:
     kind: Service
     name: apis
 - patch: |-
     - op: replace
       path: /spec/selector/app
-      value: file-support-ui
+      value: fire-support-ui
   target:
     kind: Service
     name: ui
