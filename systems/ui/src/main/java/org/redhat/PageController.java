@@ -5,6 +5,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.core.MediaType;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import jakarta.inject.Inject;
 import io.quarkus.qute.TemplateInstance;
@@ -14,6 +15,9 @@ import java.util.Map;
 
 @Path("/")
 public class PageController {
+
+    @ConfigProperty(name = "api.url")
+    String api;
 
     @Inject
     Template home;
@@ -37,6 +41,9 @@ public class PageController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/all")
     public Map<String,Object> all() {
+        System.out.println("===================");
+        System.out.println(api);
+        System.out.println("===================");
         return apis.all();
     }
 
