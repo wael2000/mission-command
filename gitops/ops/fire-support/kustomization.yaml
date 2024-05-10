@@ -9,23 +9,73 @@ configMapGenerator:
   - battalion=1
   - location=AWS
   - system=Fire-Support
-  - app_name=fire-support
+  - app_name=file-support
 patches:
 - patch: |-
     - op: replace
       path: /metadata/name
-      value: fire-support-apis
+      value: file-support-apis
+    - op: replace
+      path: /metadata/labels/app
+      value: file-support-apis
+    - op: replace
+      path: /metadata/labels/app.kubernetes.io~1part-of
+      value: file-support
   target:
-    group: apps
-    kind: Deployment
     name: apis
-    version: v1
 - patch: |-
     - op: replace
       path: /metadata/name
-      value: fire-aupport-ui
+      value: file-support-ui
+    - op: replace
+      path: /metadata/labels/app
+      value: file-support-ui
+    - op: replace
+      path: /metadata/labels/app.kubernetes.io~1part-of
+      value: file-support
   target:
-    group: apps
+    name: ui
+- patch: |-
+    - op: replace
+      path: /spec/to/name
+      value: file-support-ui
+  target:
+    kind: Route
+    name: ui
+- patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/env/0/value
+      value: file-support-apis
+    - op: replace
+      path: /spec/selector/matchLabels/app
+      value: file-support-ui
+    - op: replace
+      path: /spec/template/metadata/labels/app
+      value: file-support-ui
+  target:
     kind: Deployment
     name: ui
-    version: v1
+- patch: |-
+    - op: replace
+      path: /spec/selector/matchLabels/app
+      value: file-support-apis
+    - op: replace
+      path: /spec/template/metadata/labels/app
+      value: file-support-apis
+  target:
+    kind: Deployment
+    name: apis
+- patch: |-
+    - op: replace
+      path: /spec/selector/app
+      value: file-support-apis
+  target:
+    kind: Service
+    name: apis
+- patch: |-
+    - op: replace
+      path: /spec/selector/app
+      value: file-support-ui
+  target:
+    kind: Service
+    name: ui
