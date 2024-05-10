@@ -5,7 +5,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.core.MediaType;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import jakarta.inject.Inject;
 import io.quarkus.qute.TemplateInstance;
@@ -15,9 +14,6 @@ import java.util.Map;
 
 @Path("/")
 public class PageController {
-
-    @ConfigProperty(name = "api.url")
-    String api;
 
     @Inject
     Template home;
@@ -30,8 +26,7 @@ public class PageController {
     @Produces(MediaType.TEXT_HTML)
     @Path("")
     public TemplateInstance home() {
-        return  home.data("api",api)
-                    .data("view", "grid")
+        return  home.data("view", "grid")
                     .data("username", "Kees")
                     .data("emp", "")
                     .data("email", "email");
