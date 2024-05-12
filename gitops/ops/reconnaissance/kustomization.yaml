@@ -8,74 +8,74 @@ configMapGenerator:
   literals:
   - battalion=1
   - location=AWS
-  - system=Fire-Support
-  - app_name=fire-support
+  - system=Reconnaissance
+  - app_name=reconnaissance
 patches:
 - patch: |-
     - op: replace
       path: /metadata/name
-      value: fire-support-apis
+      value: reconnaissance-apis
     - op: replace
       path: /metadata/labels/app
-      value: fire-support-apis
+      value: reconnaissance-apis
     - op: replace
       path: /metadata/labels/app.kubernetes.io~1part-of
-      value: fire-support
+      value: reconnaissance
   target:
     name: apis
 - patch: |-
     - op: replace
       path: /metadata/name
-      value: fire-support-ui
+      value: reconnaissance-ui
     - op: replace
       path: /metadata/labels/app
-      value: fire-support-ui
+      value: reconnaissance-ui
     - op: replace
       path: /metadata/labels/app.kubernetes.io~1part-of
-      value: fire-support
+      value: reconnaissance
   target:
     name: ui
 - patch: |-
     - op: replace
       path: /spec/to/name
-      value: fire-support-ui
+      value: reconnaissance-ui
   target:
     kind: Route
     name: ui
 - patch: |-
     - op: replace
-      path: /spec/template/spec/containers/0/env/0/value
-      value: fire-support-apis
+      path: /spec/template/spec/containers/0/env/0/value 
+      value: reconnaissance-apis
     - op: replace
       path: /spec/selector/matchLabels/app
-      value: fire-support-ui
+      value: reconnaissance-ui
     - op: replace
       path: /spec/template/metadata/labels/app
-      value: fire-support-ui
+      value: reconnaissance-ui
   target:
     kind: Deployment
     name: ui
 - patch: |-
     - op: replace
       path: /spec/selector/matchLabels/app
-      value: fire-support-apis
+      value: reconnaissance-apis
     - op: replace
       path: /spec/template/metadata/labels/app
-      value: fire-support-apis
+      value: reconnaissance-apis            
   target:
     kind: Deployment
     name: apis
 - patch: |-
     - op: replace
       path: /spec/selector/app
-      value: fire-support-apis
+      value: reconnaissance-apis
   target:
     kind: Service
     name: apis
 - patch: |-
     - op: replace
       path: /spec/selector/app
-      value: fire-support-ui
+      value: reconnaissance-ui
   target:
     kind: Service
     name: ui

@@ -1,0 +1,17 @@
+apiVersion: azure.microsoft.com/v1alpha2
+kind: PostgreSQLServer
+metadata:
+  name: postgresqlserver-sample
+spec:
+  createMode: Default
+  location: eastus
+  replicaProperties: {}
+  resourceGroup: openenv-kjkm7
+  serverVersion: '10'
+  sku:
+    capacity: 4
+    family: Gen5
+    name: GP_Gen5_4
+    size: '51200'
+    tier: GeneralPurpose
+  sslEnforcement: Enabled
