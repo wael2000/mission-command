@@ -106,7 +106,7 @@ metadata:
 data:
   database-name: c2FtcGxlZGI=
   database-password: QzBtcGxleFBAc3N3MHJk #C0mplexP@ssw0rd
-  database-user: cG9zdGdyZXM=
+  database-user: cG9zdGdyZXNAcG9zdGdyZXNxbHNlcnZlci1iYXR0YWxpb24= #postgres@postgresqlserver-battalion
 type: Opaque
 ---
 kind: Service
