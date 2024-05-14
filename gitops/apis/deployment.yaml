@@ -45,7 +45,7 @@ spec:
               value: Fixed-Wing
             - name: cors.origin
               value: 'http://dummy'
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
       restartPolicy: Always
   strategy:
     type: RollingUpdate

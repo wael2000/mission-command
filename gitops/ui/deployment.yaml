@@ -24,7 +24,7 @@ spec:
           env:
             - name: apiurl
               value: apis
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
   strategy:
