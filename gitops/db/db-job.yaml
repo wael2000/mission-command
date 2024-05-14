@@ -24,7 +24,7 @@ spec:
         image: 'postgres:14'
         command:
           - psql
-          - 'postgresql://postgres%40postgresqlserver-battalion:C0mplexP%40ssw0rd@postgresqldb/default'
+          - 'postgresql://postgres%40postgresqlserver-battalion:C0mplexP%40ssw0rd@postgresqldb/sampledb'
           - '-f'
           - /etc/dbvolume/create_database.sql
         resources: {}
