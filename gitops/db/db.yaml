@@ -104,7 +104,7 @@ apiVersion: v1
 metadata:
   name: postgresql
 data:
-  database-name: c2FtcGxlZGI=
+  database-name: YmF0dGFsaW9u #battalion
   database-password: QzBtcGxleFBAc3N3MHJk #C0mplexP@ssw0rd
   database-user: cG9zdGdyZXNAcG9zdGdyZXNxbHNlcnZlci1iYXR0YWxpb24= #postgres@postgresqlserver-battalion
 type: Opaque
