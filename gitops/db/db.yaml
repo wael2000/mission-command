@@ -105,7 +105,7 @@ metadata:
   name: postgresql
 data:
   database-name: c2FtcGxlZGI=
-  database-password: cG9zdGdyZXM=
+  database-password: QzBtcGxleFBAc3N3MHJk #C0mplexP@ssw0rd
   database-user: cG9zdGdyZXM=
 type: Opaque
 ---
