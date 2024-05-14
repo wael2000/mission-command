@@ -40,3 +40,4 @@ nb-configuration.xml
 
 env.sh
 secret.yaml
+azure-db-secret.yaml
