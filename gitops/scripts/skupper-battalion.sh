@@ -21,6 +21,9 @@ skupper service delete postgresql -n battalion-hauk-azure
 # create and bind
 skupper service create postgresql 5432 --protocol tcp -n battalion-hauk
 
+
+skupper service bind postgresql service postgresqldb -n battalion-hauk
+
 skupper service bind postgresql service postgresqldb.battalion-hauk.svc.cluster.local  -n battalion-hauk
 skupper service bind postgresql service azure-postgresql-service.battalion-hauk-azure.svc.cluster.local  -n battalion-hauk-azure
 
