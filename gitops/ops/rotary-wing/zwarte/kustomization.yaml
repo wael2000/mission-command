@@ -1,0 +1,82 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- ../../../apis
+- ../../../ui
+configMapGenerator:
+- name: app-config
+  literals:
+  - battalion_id=5
+  - battalion=zwarte
+  - location=Azure
+  - system=Reconnaissance
+  - app_name=reconnaissance
+patches:
+- patch: |-
+    - op: replace
+      path: /metadata/name
+      value: rotary-wing-apis
+    - op: replace
+      path: /metadata/labels/app
+      value: rotary-wing-apis
+    - op: replace
+      path: /metadata/labels/app.kubernetes.io~1part-of
+      value: rotary-wing
+  target:
+    name: apis
+- patch: |-
+    - op: replace
+      path: /metadata/name
+      value: rotary-wing-ui
+    - op: replace
+      path: /metadata/labels/app
+      value: rotary-wing-ui
+    - op: replace
+      path: /metadata/labels/app.kubernetes.io~1part-of
+      value: rotary-wing
+  target:
+    name: ui
+- patch: |-
+    - op: replace
+      path: /spec/to/name
+      value: rotary-wing-ui
+  target:
+    kind: Route
+    name: ui
+- patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/env/0/value
+      value: rotary-wing-apis
+    - op: replace
+      path: /spec/selector/matchLabels/app
+      value: rotary-wing-ui
+    - op: replace
+      path: /spec/template/metadata/labels/app
+      value: rotary-wing-ui
+  target:
+    kind: Deployment
+    name: ui
+- patch: |-
+    - op: replace
+      path: /spec/selector/matchLabels/app
+      value: rotary-wing-apis
+    - op: replace
+      path: /spec/template/metadata/labels/app
+      value: rotary-wing-apis
+  target:
+    kind: Deployment
+    name: apis
+- patch: |-
+    - op: replace
+      path: /spec/selector/app
+      value: rotary-wing-apis
+  target:
+    kind: Service
+    name: apis
+- patch: |-
+    - op: replace
+      path: /spec/selector/app
+      value: rotary-wing-ui
+  target:
+    kind: Service
+    name: ui
