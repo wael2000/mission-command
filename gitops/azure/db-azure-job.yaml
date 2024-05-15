@@ -23,7 +23,7 @@ spec:
       - name: init-build-db
         image: 'postgres:14'
         command: ["/bin/sh","-c"]
-        args: ["sleep 3; psql postgresql://postgres%40postgresqlserver-battalion:C0mplexP%40ssw0rd@az/battalion -f /etc/dbvolume/build_tables.sql"]
+        args: ["sleep 3; psql postgresql://postgres%40postgresqlserver-battalion:C0mplexP%40ssw0rd@azure-postgresql-service/battalion -f /etc/dbvolume/build_tables.sql"]
         resources: {}
         volumeMounts:
           - name: data-volume
@@ -34,7 +34,7 @@ spec:
       - name: init-populate-db
         image: 'postgres:14'
         command: ["/bin/sh","-c"]
-        args: ["sleep 6; psql postgresql://postgres%40postgresqlserver-battalion:C0mplexP%40ssw0rd@az/battalion -f /etc/dbvolume/data.sql"]
+        args: ["sleep 6; psql postgresql://postgres%40postgresqlserver-battalion:C0mplexP%40ssw0rd@azure-postgresql-service/battalion -f /etc/dbvolume/data.sql"]
         resources: {}
         volumeMounts:
           - name: data-volume
@@ -45,7 +45,7 @@ spec:
       - name: init-populate-config
         image: 'postgres:14'
         command: ["/bin/sh","-c"]
-        args: ["sleep 9; psql postgresql://postgres%40postgresqlserver-battalion:C0mplexP%40ssw0rd@az/battalion -f /etc/dbvolume/config.sql"]
+        args: ["sleep 9; psql postgresql://postgres%40postgresqlserver-battalion:C0mplexP%40ssw0rd@azure-postgresql-service/battalion -f /etc/dbvolume/config.sql"]
         resources: {}
         volumeMounts:
           - name: data-volume

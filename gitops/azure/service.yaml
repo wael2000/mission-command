@@ -7,11 +7,3 @@ spec:
   type: ExternalName
   externalName: postgresqlserver-battalion.postgres.database.azure.com
 selector: {}
-
-# once created, you can map it to skupper service 
-# skupper init --enable-console --enable-flow-collector --console-auth unsecured
-# skupper expose service azure-postgresql-service --address az --port 5432
-
-# psql "host=az port=5432 dbname=battalion user=postgres@postgresqlserver-battalion password=C0mplexP@ssw0rd sslmode=require"
-
-#@postgresqlserver-battalion

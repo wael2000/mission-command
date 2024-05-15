@@ -40,6 +40,9 @@ public class GpsReporter implements Runnable {
 
             try {
                 
+                System.out.println(copy);
+                System.out.println(battalionid);
+                System.out.println("=================");
                 locationService.updateBattalionLocation(battalionid, copy);
 
                 
