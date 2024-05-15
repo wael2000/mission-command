@@ -3,13 +3,6 @@ kind: Kustomization
 resources:
 - ../../apis
 - ../../ui
-configMapGenerator:
-- name: app-config
-  literals:
-  - battalion=1
-  - location=AWS
-  - system=Fixed-Wing
-  - app_name=fixed-wing
 patches:
 - patch: |-
     - op: replace

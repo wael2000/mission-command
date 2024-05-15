@@ -31,18 +31,12 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: app-config
-                  key: battalion
+                  key: battalion_id
             - name: system
               valueFrom:
                 configMapKeyRef:
                   name: app-config
                   key: system
-            - name: battalion1
-              value: '1'
-            - name: location1
-              value: DC
-            - name: system1
-              value: Fixed-Wing
             - name: cors.origin
               value: 'http://dummy'
           imagePullPolicy: Always
