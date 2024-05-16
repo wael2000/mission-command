@@ -6,4 +6,4 @@ resources:
 configMapGenerator:
 - name: app-config
   literals:
-  - location=azure
+  - location=azue

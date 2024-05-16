@@ -75,5 +75,5 @@ configMapGenerator:
 - name: app-config
   behavior: merge
   literals:
-  - battalion_id=3
-  - battalion=delta
+  - system=Reconnaissance
+  - app_name=reconnaissance
