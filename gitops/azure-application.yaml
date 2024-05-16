@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: BATTALION-azure-db
+spec:
+  destination:
+    namespace: battalion-BATTALION
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: gitops/azure
+    repoURL: https://github.com/wael2000/mission-command
+    targetRevision: main
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
