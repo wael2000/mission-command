@@ -50,8 +50,7 @@ spec:
         - name: verbose
           value: 'true'
         - name: gitInitImage
-          value: >-
-            registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:9b14f52b21d29d8d83ea4c0e78623debc954f1a732d2be6d1a7269fbba23b1a4
+          value: 'registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:9b14f52b21d29d8d83ea4c0e78623debc954f1a732d2be6d1a7269fbba23b1a4'
         - name: userHome
           value: /home/git
       taskRef:
@@ -63,11 +62,7 @@ spec:
     - name: deploy-app
       params:
         - name: SCRIPT
-          value: >-
-            sed -e 's/BATTALION/$(params.battalion)/g' -e
-            's/APP_NAME/$(params.app_name)/g' -e
-            's/LOCATION/$(params.location)/g' gitops/ops-application.yaml | oc
-            create -f - -n openshift-gitops
+          value: sed -e 's/BATTALION/$(params.battalion)/g' -e 's/APP_NAME/$(params.app_name)/g' -e 's/LOCATION/$(params.location)/g' gitops/ops-application.yaml | oc create -f - -n openshift-gitops
         - name: VERSION
           value: latest
       runAfter:
@@ -86,9 +81,7 @@ spec:
     - name: remove-the-app
       params:
         - name: SCRIPT
-          value: >-
-            oc delete application $(params.battalion)-$(params.app_name) -n
-            openshift-gitops 
+          value: 'oc delete application $(params.battalion)-$(params.app_name) -n openshift-gitops '
         - name: VERSION
           value: latest
       runAfter:
@@ -106,5 +99,3 @@ spec:
           workspace: source
   workspaces:
     - name: source
-      optional: false
-  finally: []

@@ -61,11 +61,11 @@ spec:
     - name: deploy-azure-service
       params:
         - name: SCRIPT
-          value: oc create -f gitops/azure/postgresql-full.yaml -n battalion-$(params.battalion)
+          value: sed 's/BATTALION/$(params.battalion)/g' gitops/azure-application.yaml | oc create -f - -n openshift-gitops
         - name: VERSION
           value: latest
       runAfter:
-        - openshift-client
+        - create-secret
       taskRef:
         kind: ClusterTask
         name: openshift-client
@@ -80,7 +80,7 @@ spec:
     - name: remove-azure-service
       params:
         - name: SCRIPT
-          value: oc delete PostgreSQLServer postgresqlserver-battalion -n battalion-$(params.battalion)
+          value: oc delete application $(params.battalion)-azure-db -n openshift-gitops
         - name: VERSION
           value: latest
       runAfter:
@@ -96,12 +96,28 @@ spec:
       workspaces:
         - name: manifest-dir
           workspace: source
-    - name: openshift-client
+    - name: create-secret
       params:
         - name: SCRIPT
           value: |-
             oc create secret generic postgresqlserver-postgresqlserver-battalion --from-literal=fullyQualifiedUsername=postgres@postgresqlserver-battalion --from-literal=password=C0mplexP@ssw0rd \
-            --from-literal=postgreSqlServerName=postgresqlserver-battalion --from-literal=username=postgres -n battalion-$(params.battalion)
+            --from-literal=postgreSqlServerName=postgresqlserver-battalion --from-literal=username=postgres -n battalion-$(params.battalion)-azure
+        - name: VERSION
+          value: latest
+      runAfter:
+        - add-to-manage-scope
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      when:
+        - input: $(params.action)
+          operator: in
+          values:
+            - deploy
+    - name: create-project
+      params:
+        - name: SCRIPT
+          value: oc new-project battalion-$(params.battalion)-azure
         - name: VERSION
           value: latest
       runAfter:
@@ -114,5 +130,24 @@ spec:
           operator: in
           values:
             - deploy
+    - name: add-to-manage-scope
+      params:
+        - name: SCRIPT
+          value: oc label ns battalion-$(params.battalion)-azure argocd.argoproj.io/managed-by=openshift-gitops
+        - name: VERSION
+          value: latest
+      runAfter:
+        - create-project
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      when:
+        - input: $(params.action)
+          operator: in
+          values:
+            - deploy
+      workspaces:
+        - name: manifest-dir
+          workspace: source
   workspaces:
     - name: source

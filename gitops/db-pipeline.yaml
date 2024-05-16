@@ -16,6 +16,9 @@ spec:
       description: action
       name: action
       type: string
+    - default: DC
+      name: location
+      type: string
   tasks:
     - name: git-clone
       params:
@@ -48,8 +51,7 @@ spec:
         - name: verbose
           value: 'true'
         - name: gitInitImage
-          value: >-
-            registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:9b14f52b21d29d8d83ea4c0e78623debc954f1a732d2be6d1a7269fbba23b1a4
+          value: 'registry.redhat.io/openshift-pipelines/pipelines-git-init-rhel8@sha256:9b14f52b21d29d8d83ea4c0e78623debc954f1a732d2be6d1a7269fbba23b1a4'
         - name: userHome
           value: /home/git
       taskRef:
@@ -77,9 +79,7 @@ spec:
     - name: add-to-manage-scope
       params:
         - name: SCRIPT
-          value: >-
-            oc label ns battalion-$(params.battalion)
-            argocd.argoproj.io/managed-by=openshift-gitops
+          value: oc label ns battalion-$(params.battalion) argocd.argoproj.io/managed-by=openshift-gitops
         - name: VERSION
           value: latest
       runAfter:
@@ -98,9 +98,7 @@ spec:
     - name: deploy-application
       params:
         - name: SCRIPT
-          value: >-
-            sed 's/BATTALION/$(params.battalion)/g' gitops/db-application.yaml |
-            oc create -f - -n openshift-gitops
+          value: sed -e 's/BATTALION/$(params.battalion)/g' -e 's/LOCATION/$(params.location)/g' gitops/db-application.yaml | oc create -f - -n openshift-gitops
         - name: VERSION
           value: latest
       runAfter:
@@ -119,9 +117,7 @@ spec:
     - name: remove-the-app
       params:
         - name: SCRIPT
-          value: >-
-            oc delete application $(params.battalion)-db -n openshift-gitops |
-            oc delete project  battalion-$(params.battalion) 
+          value: 'oc delete application $(params.battalion)-db -n openshift-gitops | oc delete project  battalion-$(params.battalion) '
         - name: VERSION
           value: latest
       runAfter:
@@ -139,5 +135,3 @@ spec:
           workspace: source
   workspaces:
     - name: source
-      optional: false
-  finally: []

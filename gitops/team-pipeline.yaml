@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
-  name: battalion-team-deploy-pipeline
+  name: battalion-deploy-team-pipeline
 spec:
   params:
     - default: hauk
@@ -15,7 +15,7 @@ spec:
     - default: fixed-wing
       name: app_name
       type: string
-    - default: DC
+    - default: dc
       name: location
       type: string
   tasks:
@@ -135,7 +135,7 @@ spec:
     - name: expose-db
       params:
         - name: SCRIPT
-          value: oc create -f gitops/db/db-service.yaml -n battalion-$(params.battalion)
+          value: oc create -f gitops/db/base/db-service.yaml -n battalion-$(params.battalion)
         - name: VERSION
           value: latest
       runAfter:
