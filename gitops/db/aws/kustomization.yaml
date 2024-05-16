@@ -6,4 +6,4 @@ configMapGenerator:
   - name: db-config
     behavior: merge
     literals:
-      - config.sql=insert into config (id,key,value) values (1,'dblocation','AWS');
+      - config.sql=insert into config (id,key,value) values (1,'dblocation','aws');
