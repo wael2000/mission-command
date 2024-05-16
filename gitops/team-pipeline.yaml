@@ -97,7 +97,7 @@ spec:
     - name: provision-db
       params:
         - name: SCRIPT
-          value: sed -e 's/BATTALION/$(params.battalion)/g' -e ’s/LOCATION/$(params.location)/g’ gitops/db-application.yaml | oc create -f - -n openshift-gitops
+          value: sed -e 's/BATTALION/$(params.battalion)/g' -e 's/LOCATION/$(params.location)/g' gitops/db-application.yaml | oc create -f - -n openshift-gitops
         - name: VERSION
           value: latest
       runAfter:
