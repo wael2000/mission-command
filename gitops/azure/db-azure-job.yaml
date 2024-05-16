@@ -17,7 +17,7 @@ spec:
       volumes:
         - name: data-volume
           configMap:
-            name: db-config
+            name: db-azure-config
             defaultMode: 420    
       containers:
       - name: init-build-db
