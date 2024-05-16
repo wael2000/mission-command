@@ -8,21 +8,15 @@ spec:
       description: battalion name
       name: battalion
       type: string
-    - default: '0'
-      description: battalion id
-      name: battalion_id
-      type: string
     - default: deploy
       description: action
       name: action
       type: string
-    - default: DC
-      description: location
-      name: location
+    - default: fixed-wing
+      name: app_name
       type: string
-    - default: Fixed-Wing
-      description: system
-      name: system
+    - default: dc
+      name: location
       type: string
   tasks:
     - name: git-clone
@@ -70,8 +64,10 @@ spec:
       params:
         - name: SCRIPT
           value: >-
-            sed 's/BATTALION/$(params.battalion)/g' gitops/ops-application.yaml
-            | oc create -f - -n openshift-gitops
+            sed -e 's/BATTALION/$(params.battalion)/g' -e
+            's/APP_NAME/$(params.app_name)/g' -e
+            's/LOCATION/$(params.location)/g' gitops/ops-application.yaml | oc
+            create -f - -n openshift-gitops
         - name: VERSION
           value: latest
       runAfter:
@@ -91,8 +87,8 @@ spec:
       params:
         - name: SCRIPT
           value: >-
-            oc delete application $(params.battalion)-db -n openshift-gitops |
-            oc delete project  battalion-$(params.battalion) 
+            oc delete application $(params.battalion)-$(params.app_name) -n
+            openshift-gitops 
         - name: VERSION
           value: latest
       runAfter:
@@ -108,20 +104,6 @@ spec:
       workspaces:
         - name: manifest-dir
           workspace: source
-    - name: config-app
-      params:
-        - name: SCRIPT
-          value: >-
-            oc set env deployment/apis battalion=$(params.battalion_id)
-            location=$(params.location) system=$(params.system) -n
-            battalion-$(params.battalion)
-        - name: VERSION
-          value: latest
-      runAfter:
-        - deploy-app
-      taskRef:
-        kind: ClusterTask
-        name: openshift-client
   workspaces:
     - name: source
       optional: false
