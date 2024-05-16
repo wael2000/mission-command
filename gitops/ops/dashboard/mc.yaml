@@ -1,0 +1,83 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: mc
+  labels:
+    app.kubernetes.io/part-of: mission-command
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mc
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: mc
+        deployment: mc
+    spec:
+      containers:
+        - name: mc
+          image: 'quay.io/wael2000/mc:latest'
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: pipeline.el
+              value: 'http://el-battalion-ops-mc-datacenter.apps.cluster-pv5p5.dynamic.redhatworkshops.io'
+            - name: build.pipeline.el
+              value: 'http://dummy'
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: mc
+  labels:
+    app.kubernetes.io/part-of: mission-command
+spec:
+  ipFamilies:
+    - IPv4
+  ports:
+    - name: 8080-tcp
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  internalTrafficPolicy: Cluster
+  type: ClusterIP
+  ipFamilyPolicy: SingleStack
+  sessionAffinity: None
+  selector:
+    app: mc
+    deployment: mc
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: mc
+  labels:
+    app.kubernetes.io/part-of: mission-command
+spec:
+  to:
+    kind: Service
+    name: mc
+  tls: null
+  port:
+    targetPort: 8080-tcp
