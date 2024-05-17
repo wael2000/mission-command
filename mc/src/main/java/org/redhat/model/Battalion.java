@@ -124,8 +124,15 @@ public class Battalion extends PanacheEntity {
     public Map<String,Integer> getEquipmentMap(){
         Map<String,Integer> map = new HashMap<String,Integer>();
         for (Equipment equipment : equipments) {
-            Integer counter= map.get(equipment.getType());
-            map.put(equipment.getType(),(counter==null?1:++counter));
+            Integer counter = map.get(equipment.getType())!=null?map.get(equipment.getType()):0;
+            map.put(equipment.getType(),++counter);
+        }
+        return map;
+    }
+    public Map<String,String> getEquipmenStatusMap(){
+        Map<String,String> map = new HashMap<String,String>();
+        for (Equipment equipment : equipments) {
+            map.put(equipment.getType(),equipment.getStatus());
         }
         return map;
     }

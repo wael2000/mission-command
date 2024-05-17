@@ -33,10 +33,12 @@ public class NotificationController {
     Map<Long, Session> sessions = new ConcurrentHashMap<>();
     
     Map<Long, String> systems = new HashMap<>();
+    Map<Long, Map<String,String>> equipments = new HashMap<>();
 
     @OnOpen
     public void onOpen(Session session, @PathParam("battalion") Long battalion) {
         sessions.put(battalion, session);
+        systems.put(battalion,"off");
     }
 
     @OnClose
@@ -61,17 +63,35 @@ public class NotificationController {
     void broadcast() {
         // get System Status update
         Map<Long, String> updatedSystems = service.findSystemStatusByIds(sessions.keySet());
-        
         updatedSystems.keySet().forEach( k -> {
             if(!updatedSystems.get(k).equals(systems.get(k))) {
                 systems.put(k, updatedSystems.get(k));
-                String message = k + "," + updatedSystems.get(k);
+                String message = "b," + k + "," + updatedSystems.get(k);
                 sessions.get(k).getAsyncRemote().sendObject(message, result -> {
                 if (result.getException() != null) {
                     System.out.println("Unable to send message: " + result.getException());
                 }
                 });
             }
+            if( equipments.get(k)==null)
+                equipments.put(k, service.getById(k).getEquipmenStatusMap());
+            else {
+                Map<String,String> dbequipmentMap = service.getById(k).getEquipmenStatusMap();
+                Map<String,String> currentequipmentMap = equipments.get(k);
+                dbequipmentMap.keySet().forEach(equipmentK -> {
+                    if(!dbequipmentMap.get(equipmentK).equals(currentequipmentMap.get(equipmentK))){
+                        String message = "e," + equipmentK + "," + dbequipmentMap.get(equipmentK);
+                        sessions.get(k).getAsyncRemote().sendObject(message, result -> {
+                            if (result.getException() != null) {
+                                System.out.println("Unable to send message: " + result.getException());
+                            }
+                            });
+                    }
+                    
+                });
+                equipments.put(k, dbequipmentMap);
+            }
         });
+        systems.putAll(updatedSystems);
     }
 }

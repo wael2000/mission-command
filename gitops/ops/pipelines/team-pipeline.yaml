@@ -1,19 +1,16 @@
 apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
-  name: battalion-deploy-team-pipeline
+  name: battalion-deploy-team
 spec:
   params:
-    - default: hauk
+    - default: fox
       description: battalion name
       name: battalion
       type: string
     - default: deploy
       description: action
       name: action
-      type: string
-    - default: fixed-wing
-      name: app_name
       type: string
     - default: dc
       name: location

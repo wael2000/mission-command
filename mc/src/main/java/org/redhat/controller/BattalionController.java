@@ -18,6 +18,7 @@ import org.redhat.model.Battalion;
 import org.redhat.model.Coordinates;
 import org.redhat.services.BattalionService;
 import org.redhat.services.BuildPipelineProxyService;
+import org.redhat.services.OpsPipelineProxyService;
 import org.redhat.services.PipelineProxyService;
 
 
@@ -35,8 +36,12 @@ public class BattalionController {
     @Inject
     @RestClient
     PipelineProxyService pipelineProxyService;
-    
 
+    @Inject
+    @RestClient
+    OpsPipelineProxyService opsPipelineProxyService;
+
+    
     @Inject
     @RestClient
     BuildPipelineProxyService builsPipelineProxyService;
@@ -68,49 +73,52 @@ public class BattalionController {
     public Battalion setStatus(Battalion battalion) {
         Battalion bat = service.setStatus(battalion);
         // trigger the pipeline
-        System.out.print("======== pipelineEnabled ========= ");
-        System.out.println(pipelineEnabled);
-        if(pipelineEnabled && Battalion.DEPLOYED.equals( bat.getStatus()) && bat.getSystemMode().equals("auto")){
+        if(pipelineEnabled && Battalion.DEPLOYED.equals( bat.getStatus())){
             Map<String,String> payload = new HashMap<>();
             payload.put("battalion",bat.getDescription());
-            payload.put("battalion_id",bat.id.toString());
             payload.put("action","deploy");
+            payload.put("location","dc");
             pipelineProxyService.deploy(payload);
+        }
+        return bat;
+    }
+  
+
+    @POST
+    @Path("/system")
+    @Produces(MediaType.APPLICATION_JSON)
+    /**
+     * update Battalion infrastrucutre readiness (systemStatus = on/off)
+     * @param battalion
+     * @return
+     */
+    public Battalion setSystemStatus(Battalion battalion) {
+        return service.setSystemStatus(battalion);
+    }
+
+    
+    @POST
+    @Path("/equipment")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)    
+    public Battalion enablEequipment(Map<String,String> system) {
+        Battalion bat = service.setEquipmentStatus(system);
+        // trigger the equipment pipeline
+        if(pipelineEnabled){
+            Map<String,String> payload = new HashMap<>();
+            payload.put("battalion",bat.getDescription().toLowerCase());
+            payload.put("app_name",system.get("equipment").toLowerCase());
+            payload.put("action","deploy");
+            payload.put("location","dc");
+            opsPipelineProxyService.deploy(payload);
         }
         return bat;
     }
 
-    @POST
-    @Path("/deploy")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Battalion deploy(Battalion battalion) {
-        Battalion bat = Battalion.findById(battalion.id);
-        // trigger the pipeline
-        if(Battalion.DEPLOYED.equals( bat.getStatus()) && bat.getSystemMode().equals("manual")){
-            Map<String,String> payload = new HashMap<>();
-            payload.put("battalion",bat.getDescription());
-            payload.put("battalion_id",bat.id.toString());
-            payload.put("action","deploy");
-            pipelineProxyService.deploy(payload);
-        }
-        return bat;
-    }
 
-    @POST
-    @Path("/remove")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Battalion remove(Battalion battalion) {
-        Battalion bat = service.setSystemStatus(battalion);
-        // trigger the pipeline
-        if(Battalion.DEPLOYED.equals( bat.getStatus()) && bat.getSystemMode().equals("manual")){
-            Map<String,String> payload = new HashMap<>();
-            payload.put("battalion",bat.getDescription());
-            payload.put("battalion_id",bat.id.toString());
-            payload.put("action","remove");
-            pipelineProxyService.deploy(payload);
-        }
-        return bat;
-    }
+
+
+
 
     @POST
     @Path("/build")
@@ -123,32 +131,21 @@ public class BattalionController {
         return bat;
     }
 
-    @POST
-    @Path("/system")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Battalion setSystemMode(Battalion battalion) {
-        return service.setSystemStatus(battalion);
-    }
+
 
     @POST
     @Path("/onboard")
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.TEXT_PLAIN)
+    /**
+     * Slack integration
+     * @param body
+     * @return
+     */
     public String onboard(String body) {
-        System.out.println("==========================");
-        System.out.println(body);
         Map<String, String> paramMap = parseQueryString(body);
-        System.out.println("==========================");
-        //String team = paramMap.get("text").replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
         String team = paramMap.get("text");
-        for (int i = 0; i < team.length(); i++) {
-            char currentChar = team.charAt(i);
-            System.out.print(i  + "=" + currentChar + " ");
-        }
-        System.out.println("==========================");
-
         Battalion bat = service.getByName(team);
-        System.out.println(bat);
         // trigger the pipeline
         Map<String,String> payload = new HashMap<>();
         payload.put("battalion",bat.getDescription());
@@ -165,28 +162,19 @@ public class BattalionController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
     public void updateBattalionLocation(@PathParam int id, Coordinates coordinates) {
-
         service.updateBattalionLocation(id, coordinates);
 
     }
     
     private static Map<String, String> parseQueryString(String query) {
         Map<String, String> paramMap = new HashMap<>();
-
         String[] pairs = query.split("&");
         for (String pair : pairs) {
             int idx = pair.indexOf("=");
-            //try {
-                //String key = URLDecoder.decode(pair.substring(0, idx), "UTF-8");
-                //String value = URLDecoder.decode(pair.substring(idx + 1), "UTF-8");
-                String key = pair.substring(0, idx);
-                String value = pair.substring(idx + 1,pair.length()-1);
-                paramMap.put(key, value);
-            //} catch (UnsupportedEncodingException e) {
-                //e.printStackTrace(); // Handle the exception according to your needs
-            //}
+            String key = pair.substring(0, idx);
+            String value = pair.substring(idx + 1,pair.length()-1);
+            paramMap.put(key, value);
         }
-
         return paramMap;
     }
 

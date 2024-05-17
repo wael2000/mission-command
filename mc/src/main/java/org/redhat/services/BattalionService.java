@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.redhat.model.Battalion;
 import org.redhat.model.Coordinates;
 import org.redhat.model.Equipment;
@@ -21,9 +20,6 @@ public class BattalionService {
     @Inject
     EntityManager em; 
 
-    @Inject
-    @RestClient
-    PipelineProxyService pipelineProxyService;
 
     public Battalion[] getAll(){
         return em.createNamedQuery("Battalion.findAll", Battalion.class)
@@ -34,9 +30,8 @@ public class BattalionService {
     public Battalion setStatus(Battalion battalion){
         Battalion bat = Battalion.findById(battalion.id);
         bat.setStatus(battalion.getStatus());
-        for (Equipment equipment : bat.getEquipments()) {
-            equipment.setStatus(battalion.getStatus());
-        }
+        /*if(battalion.getStatus().equals("deployed"))
+            bat.setSystemStatus("on");*/
         em.persist(bat);
         return bat;
     }
@@ -45,6 +40,21 @@ public class BattalionService {
     public Battalion setSystemStatus(Battalion battalion){
         Battalion bat = Battalion.findById(battalion.id);
         bat.setSystemStatus(battalion.getSystemStatus());
+        em.persist(bat);
+        return bat;
+    }
+
+    @Transactional 
+    public Battalion setEquipmentStatus(Map<String,String> system){
+        long battalionId = Long.parseLong(system.get("battalion"));
+        String equipmentType = system.get("equipment");
+        String status = system.get("status");
+        Battalion bat = Battalion.findById(battalionId);
+        for (Equipment equipment : bat.getEquipments()) {
+            if(equipment.getType().equals(equipmentType)){
+                equipment.setStatus(status);
+            }
+        }
         em.persist(bat);
         return bat;
     }

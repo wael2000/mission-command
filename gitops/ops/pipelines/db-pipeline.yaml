@@ -4,19 +4,15 @@ metadata:
   name: battalion-db
 spec:
   params:
-    - default: blue
+    - default: fox
       description: battalion name
       name: battalion
-      type: string
-    - default: '0'
-      description: battalion id
-      name: battalion_id
       type: string
     - default: deploy
       description: action
       name: action
       type: string
-    - default: DC
+    - default: dc
       name: location
       type: string
   tasks:

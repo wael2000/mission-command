@@ -1,9 +1,13 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftWebConsole
   name: mc
   labels:
     app.kubernetes.io/part-of: mission-command
+    app.kubernetes.io/component: mc
+    app.kubernetes.io/instance: mc    
 spec:
   replicas: 1
   selector:
@@ -24,7 +28,7 @@ spec:
               protocol: TCP
           env:
             - name: pipeline.el
-              value: 'http://el-battalion-ops-mc-datacenter.apps.cluster-pv5p5.dynamic.redhatworkshops.io'
+              value: 'http://el-battalion-team-event-listener-mc-datacenter.apps.cluster-pv5p5.dynamic.redhatworkshops.io'
             - name: build.pipeline.el
               value: 'http://dummy'
           resources: {}
@@ -49,9 +53,13 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftWebConsole
   name: mc
   labels:
     app.kubernetes.io/part-of: mission-command
+    app.kubernetes.io/component: mc
+    app.kubernetes.io/instance: mc    
 spec:
   ipFamilies:
     - IPv4
@@ -71,9 +79,13 @@ spec:
 kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftWebConsole
   name: mc
   labels:
     app.kubernetes.io/part-of: mission-command
+    app.kubernetes.io/component: mc
+    app.kubernetes.io/instance: mc    
 spec:
   to:
     kind: Service

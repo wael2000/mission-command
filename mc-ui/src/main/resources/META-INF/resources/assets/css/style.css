@@ -4606,6 +4606,31 @@ h6.h1 {
   font-weight: 400;
 }
 
+.enable {
+  cursor: pointer;
+  background-color: #00f;
+  color: #fff;
+  font-size: 10px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 5px;
+  border-color: #aaa;
+  padding: 3px;
+  font-weight: 400;
+}
+
+.enabled {
+  background-color: #0a0;
+  color: #fff;
+  font-size: 10px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 5px;
+  border-color: #aaa;
+  padding: 3px;
+  font-weight: 400;
+}
+
 .logo-img {
   padding-top: 10px;
   margin-bottom: 10px;

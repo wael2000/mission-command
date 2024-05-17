@@ -164,7 +164,7 @@
                                                 <td>{{ battalion.members.length }} </td>
                                                 <td>
                                                     <div class="equipment {{  key }}" ng-repeat="(key, value) in battalion.equipmentMap"> 
-                                                            {{  value }}
+                                                            {{  value }} 
                                                     </div>
                                                 </td> 
                                                 <td>{{ battalion.status }} </td>
@@ -240,12 +240,9 @@
                                         <div class="stat-text">{{ battalion.altitude }} {{ battalion.longitude }} {{ battalion.latitude }}</div> 
                                     </div>
                                     <div class="row stat-digit" ng-repeat="(key, value) in battalion.equipmentMap"> 
-                                        <div class="col-lg-4 col-md-4 col-sm-4 equipment">
-                                            <span ng-if="(battalion.status=='deployed' && battalion.equipmenStatusMap[key]=='static')" class="enable" ng-click="startSystem(this)" equipment="{ key }}" battalion="{{ battalion }}">
-                                            Enable 
-                                            </span>
-                                            <span ng-if="(battalion.status=='deployed' && battalion.equipmenStatusMap[key]=='deployed')" class="enabled" equipment="{ key }}" battalion="{{ battalion }}">
-                                            deployed 
+                                        <div class="col-lg-4 col-md-1 col-sm-1 equipment">
+                                            <span class="enable" ng-click="enable(this, {{ key }})" battalion="{{ battalion }}">
+                                            Enable
                                             </span>
                                         </div>
                                         <div class="col-lg-4 col-md-4 col-sm-4 equipment {{  key }}">
@@ -265,15 +262,22 @@
 
                             </div>
                              <div id="div-b-{{ battalion.id}}" ng-class="battalion.systemStatus=='on' ? 'card-on' : 'card-off'">
-                                <div class="card-title">                                     
-                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example"> 
+                                <div class="card-title"> 
+                                    
+                                    <span class="badge bg-primary fs-6"> {{ battalion.systemMode }} </span>
+
+                                    <span id="div-s-{{ battalion.id }}" class="badge bg-info fs-6"> {{ battalion.systemStatus}} </span>
+                                    
+                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                        <button type="button" ng-click="removeSystems(this)" ng-if="(battalion.status=='deployed' && battalion.systemStatus=='on' && battalion.systemMode=='manual')" class="btn btn-outline-danger btn-sm">Remove</button>
+                                        <button type="button" ng-click="startSystems(this)"  ng-if="(battalion.status=='deployed' && battalion.systemStatus=='off' && battalion.systemMode=='manual')" class="btn btn-outline-success btn-sm">Start</button>
+                                        <button type="button" ng-if="(battalion.systemStatus=='on')" class="btn btn-outline-warning btn-sm">Upgrade</button>                                        
                                         <button ng-if="(battalion.systemStatus=='on')" ng-click="systemDetails(this)" class="btn btn-outline-success btn-sm"> View </button>
+
                                     </div>  
                                 </div>
                                 <div class="centerd-flex align-items-center justify-content-center">       
-                                    <div id="div-loading-{{ battalion.id }}" class="lds-ripple hidden">
-                                    <div></div><div></div>
-                                    </div>
+                                    <div id="div-loading-{{ battalion.id }}" class="lds-ripple hidden"><div></div><div></div></div>
                                 </div>
                              </div>
                         </div>
@@ -296,6 +300,41 @@
         </div>
     </div>
 
+      <!-- Modal Add Booking -->
+      <div class="modal fade none-border" id="add-booking">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title">
+                <strong>Booking </strong>
+                <code>(Only for today)</code>
+              </h4>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div>
+                        <h2><span id="lot-name"></span></h4>
+                        <div class="card-content">
+                            <h5><i class="fa fa-check text-info"></i> will be booked from now untill you release it!</h5>
+                            <code>Please make sure you move your car before midnight!</code>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <input type="hidden" id="lot-id">
+              <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-danger waves-effect waves-light save-category" data-dismiss="modal" ng-click="submitBooking()">Book</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END MODAL Add Booking-->
 
     <!-- Modal Release Battalion -->
     <div class="modal fade none-border" id="system-modal">
@@ -403,7 +442,6 @@
         }]);
 
         app.controller("BattalionManagementController", function ($scope, $http) {
-            $scope.webSocket = true;
             $scope.battalions = [];
             $scope.systems = [];
             $scope.currentBattalion;
@@ -435,12 +473,9 @@
                     }
                 }).then(function successCallback(response) {
                     $scope.battalions = response.data;
-                    if($scope.webSocket) {
-                        $scope.battalions.forEach((battalion) => {
-                                connectToSystems(battalion.id);
-                            });
-                        $scope.webSocket = false;
-                    }
+                    $scope.battalions.forEach((battalion) => {
+                            connectToSystems(battalion.id);
+                        });
                 }, function errorCallback(response) {
                     console.log(response.statusText);
                 });
@@ -520,12 +555,12 @@
                 });
             }
 
-             $scope.startSystem = function(equipment){                
+             $scope.startSystems = function(battalion){
                 var method = "POST";
-                var url = 'http://{composite}/battalion/equipment';
-                $scope.currentBattalion = equipment.battalion;
-                var data = {  "battalion" : equipment.battalion.id, "equipment" : equipment.key, "status" : "deployed" } ;
-                $("#success-alert-" + equipment.battalion.id).show();
+                var url = 'http://{composite}/battalion/deploy';
+                $scope.currentBattalion = battalion.battalion;
+                var data = {  "id" : battalion.battalion.id, "status" : "deployed" } ;
+                $("#success-alert-" + battalion.battalion.id).show();
                 $http({
                     method: method,
                     url: url,
@@ -535,8 +570,8 @@
                         'Access-Control-Allow-Origin' : '*'
                     }
                 }).then(function successCallback(response) {
-                    $("#success-alert-" + equipment.battalion.id).fadeTo(2000, 500).slideUp(500, function(){
-                        $("#success-alert-" + equipment.battalion.id).slideUp(500);
+                    $("#success-alert-" + battalion.battalion.id).fadeTo(2000, 500).slideUp(500, function(){
+                        $("#success-alert-" + battalion.battalion.id).slideUp(500);
                     });
                     _refreshPageData(global_mode,global_parameter);
                 }, function errorCallback(response) {
@@ -616,6 +651,43 @@
                 });
             }
 
+            $scope.submitBooking = function(){
+                var method = "POST";
+                var url = 'http://{composite}/booking';
+                var lot =  $("#lot-name").html();
+                var lotId =  $("#lot-id").val();
+                var data = { "lot" : { "id" : lotId } , "employee" : { "email" : '{email}'}};
+                $http({
+                method: method,
+                url: url,
+                data: angular.toJson(data),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin' : '*'
+                }
+                }).then(function successCallback(response) {
+                    if(response.data.response) {
+                        $("#success-alert").show();
+                        $("#success-alert" ).fadeTo(2000, 500).slideUp(500, function(){
+                            $("#success-alert").slideUp(500);
+                        });
+                        _refreshPageData(global_mode,global_parameter);
+                    } else {
+                        $("#warning-message").html(response.data.message);
+                        $("#warning-alert").show();
+                        $("#warning-alert").fadeTo(2000, 500).slideUp(500, function(){
+                            $("#warning-alert").slideUp(500);
+                        });
+                    }
+                }, function errorCallback(response) {
+                        $("#error-alert").show();
+                        $("#error-alert").fadeTo(2000, 500).slideUp(500, function(){
+                            $("#error-alert").slideUp(500);
+                        });
+                });
+            }
+
+
             $scope.build = function(battalion){
                 var method = "POST";
                 var url = 'http://{composite}/battalion/build';
@@ -656,7 +728,9 @@
                 $scope.view = currentView;
                 console.log($scope.view);
             }
-  
+
+            
+
             function connectToSystems(battalion) {
                 socket = new WebSocket("ws://{composite}/notify/" + battalion);
                 socket.onopen = function() {
@@ -666,22 +740,18 @@
                 };
                 socket.onmessage =function(m) {
                     console.log("Got message: " + m.data);
-                    
+                    //_refreshPageData(global_mode,global_parameter);
                     const tokens = m.data.split(',');
-                    if(tokens[0]=="b" || tokens[0]=="e") {
-                        $scope.battalions.forEach((battalion) => {
-                            if(battalion.id==tokens[1])
-                                battalion.systemStatus=tokens[1];
-                        });
-                        $("#div-b-"+tokens[1]).attr('class', 'card-' + tokens[1]);
-                        $("#div-s-"+tokens[1]).text(tokens[1]);
-                        $("#td-b-"+tokens[1]).attr('class', 'card-' + tokens[1]);
-                        $("#td-s-"+tokens[1]).text(tokens[1]);
-                        $("#div-loading-"+tokens[1]).hide();
-                    }
-                    _refreshPageData(global_mode,global_parameter);
+                    $scope.battalions.forEach((battalion) => {
+                        if(battalion.id==tokens[0])
+                            battalion.systemStatus=tokens[1];
+                    });
+                    $("#div-b-"+tokens[0]).attr('class', 'card-' + tokens[1]);
+                    $("#div-s-"+tokens[0]).text(tokens[1]);
+                    $("#td-b-"+tokens[0]).attr('class', 'card-' + tokens[1]);
+                    $("#td-s-"+tokens[0]).text(tokens[1]);
+                    $("#div-loading-"+tokens[0]).hide();
                     $scope.currentBattalion = null;
-
                 };
             }   
 
