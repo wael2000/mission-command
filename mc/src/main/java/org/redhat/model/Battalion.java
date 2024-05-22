@@ -37,6 +37,16 @@ public class Battalion extends PanacheEntity {
     private double longitude;
     private double latitude;
 
+    private Boolean azure;
+
+    public void setAzure(Boolean azure) {
+        this.azure = azure;
+    }
+
+    public Boolean isAzure() {
+        return azure;
+    }
+
     public static Battalion findByDescription(String description){
         return find("description", description).firstResult();
     }

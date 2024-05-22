@@ -19,6 +19,7 @@ import org.redhat.model.Coordinates;
 import org.redhat.services.BattalionService;
 import org.redhat.services.BuildPipelineProxyService;
 import org.redhat.services.OpsPipelineProxyService;
+import org.redhat.services.AzurePipelineProxyService;
 import org.redhat.services.PipelineProxyService;
 
 
@@ -41,6 +42,9 @@ public class BattalionController {
     @RestClient
     OpsPipelineProxyService opsPipelineProxyService;
 
+    @Inject
+    @RestClient
+    AzurePipelineProxyService azurePipelineProxyService;
     
     @Inject
     @RestClient
@@ -116,7 +120,21 @@ public class BattalionController {
     }
 
 
-
+    @POST
+    @Path("/azure")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)    
+    public Battalion azure(Map<String,String> system) {
+        // trigger the equipment pipeline
+        Map<String,String> payload = new HashMap<String,String>();
+        payload.put("battalion",system.get("battalion"));
+        payload.put("action","deploy");
+        if(pipelineEnabled){
+            azurePipelineProxyService.deploy(payload);
+            payload.put("status","deployed");
+        }
+        return service.deployOnAzure(Long.parseLong(system.get("battalion")));
+    }
 
 
 

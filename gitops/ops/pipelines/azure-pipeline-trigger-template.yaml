@@ -1,0 +1,35 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: azure-trigger-template
+spec:
+  params:
+    - description: battalion name
+      name: battalion
+    - description: action
+      name: action
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: azure-pipeline-$(tt.params.battalion)-
+      spec:
+        params:
+          - name: battalion
+            value: $(tt.params.battalion)
+          - name: action
+            value: $(tt.params.action)
+        pipelineRef:
+          name: azure-postgresql
+        serviceAccountName: pipeline
+        workspaces:
+          - name: source
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 128Mi
+                storageClassName: ocs-external-storagecluster-ceph-rbd
+                volumeMode: Filesystem

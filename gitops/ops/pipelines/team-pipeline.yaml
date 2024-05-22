@@ -4,7 +4,7 @@ metadata:
   name: battalion-deploy-team
 spec:
   params:
-    - default: fox
+    - default: fox-team
       description: battalion name
       name: battalion
       type: string

@@ -69,11 +69,11 @@ data:
 
   create_database.sql: CREATE DATABASE battalion;
   data.sql: |-
-    insert into Battalion (id,name,description,status,systemStatus,systemMode,altitude,longitude,latitude) values (1,'Fox Team','fox-team','static','off','auto',0.0,0.0,0.0);
-    insert into Battalion (id,name,description,status,systemStatus,systemMode,altitude,longitude,latitude) values (2,'Hauk Team','hauk-team','static','off','auto',0.0,0.0,0.0);
-    insert into Battalion (id,name,description,status,systemStatus,systemMode,altitude,longitude,latitude) values (3,'Delta Team','delta-team','static','off','manual',0.0,0.0,0.0);
-    insert into Battalion (id,name,description,status,systemStatus,systemMode,altitude,longitude,latitude) values (4,'Mes Team','mes-team','static','off','auto',0.0,0.0,0.0);
-    insert into Battalion (id,name,description,status,systemStatus,systemMode,altitude,longitude,latitude) values (5,'Zwarte Team','zwarte-team','static','off','auto',0.0,0.0,0.0);
+    insert into Battalion (id,name,description,status,systemStatus,systemMode,altitude,longitude,latitude,azure) values (1,'Fox Team','fox-team','static','off','auto',0.0,0.0,0.0,false);
+    insert into Battalion (id,name,description,status,systemStatus,systemMode,altitude,longitude,latitude,azure) values (2,'Hauk Team','hauk-team','static','off','auto',0.0,0.0,0.0,false);
+    insert into Battalion (id,name,description,status,systemStatus,systemMode,altitude,longitude,latitude,azure) values (3,'Delta Team','delta-team','static','off','manual',0.0,0.0,0.0,false);
+    insert into Battalion (id,name,description,status,systemStatus,systemMode,altitude,longitude,latitude,azure) values (4,'Mes Team','mes-team','static','off','auto',0.0,0.0,0.0,false);
+    insert into Battalion (id,name,description,status,systemStatus,systemMode,altitude,longitude,latitude,azure) values (5,'Zwarte Team','zwarte-team','static','off','auto',0.0,0.0,0.0,false);
 
     insert into Member (id,name,rank,email,team_id) values (1,'Col-01','lieutenant colonel','Col-01@mail.com',1);
     insert into Member (id,name,rank,email,team_id) values (2,'Cap-02','captain','Cap-02@mail.com',1);

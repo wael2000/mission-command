@@ -84,6 +84,13 @@ public class BattalionService {
         return Battalion.findById(id);
     }
 
+    public Battalion deployOnAzure(long id){
+        Battalion battalion = Battalion.findById(id);
+        battalion.setAzure(true);
+        em.persist(battalion);
+        return battalion;
+    }
+
     public void updateBattalionLocation(int id, Coordinates coordinates) {
 
         Battalion battalion = getById(id);

@@ -195,7 +195,7 @@
 
 
                     <!-- # row Battalion grid -->
-                    <div class="row" class="grid" ng-if="view=='grid'">                        
+                    <div class="row" class="grid" ng-if="view=='grid'"> 
                         <div class="col-lg-2 col-md-3 col-sm-3" ng-repeat="battalion in battalions | orderBy:'-id'" on-finish-render="callRenderFinished()" on-start-render="callRenderStarted()">
                             <div class="card">                                
                                 <div class="stat-widget-one">
@@ -241,10 +241,10 @@
                                     </div>
                                     <div class="row stat-digit" ng-repeat="(key, value) in battalion.equipmentMap"> 
                                         <div class="col-lg-4 col-md-4 col-sm-4 equipment">
-                                            <span ng-if="(battalion.status=='deployed' && battalion.equipmenStatusMap[key]=='static')" class="enable" ng-click="startSystem(this)" equipment="{ key }}" battalion="{{ battalion }}">
+                                            <span ng-if="(battalion.systemStatus=='on' && battalion.equipmenStatusMap[key]=='static')" class="enable" ng-click="startSystem(this)" equipment="{ key }}" battalion="{{ battalion }}">
                                             Enable 
                                             </span>
-                                            <span ng-if="(battalion.status=='deployed' && battalion.equipmenStatusMap[key]=='deployed')" class="enabled" equipment="{ key }}" battalion="{{ battalion }}">
+                                            <span ng-if="(battalion.systemStatus=='on' && battalion.equipmenStatusMap[key]=='deployed')" class="enabled" equipment="{ key }}" battalion="{{ battalion }}">
                                             deployed 
                                             </span>
                                         </div>
@@ -256,6 +256,19 @@
                                     </div>
                                 </div>
                                 <span class="btn btn-success badge" ng-click="build(this)"> Build </span>
+
+                                <div class="row" ng-if="(battalion.systemStatus=='on' && battalion.azure==false)"> 
+                                    <div  ng-click="azure(this)" class="col-11 azure-psql">
+                                        Azure native service
+                                    </div>
+                                </div>
+                                <div class="row" ng-if="(battalion.azure==true)"> 
+                                    <div ng-if="(battalion.systemStatus=='on')" ng-click="azure(this)" class="col-11 azure-psql">
+                                        Azure native service is deployed
+                                    </div>
+                                </div>
+                                
+
                                 <span class="alert-success hidden" id="build-alert-{{battalion.id}}">
                                     Build has started!
                                 </span>
@@ -297,6 +310,42 @@
     </div>
 
 
+
+     <!-- Modal Azure  -->
+    <div class="modal fade none-border" id="azure-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">
+            <strong>Battalion </strong>
+            <code>( {{currentBattalion.description}} )</code>
+            </h4>
+        </div>
+        <div class="modal-body">
+            <form>
+            <div class="row">
+                <div class="col-lg-12">
+                <div>
+                    <div class="card-content">
+                        <span class="panel card-title"> You are about to provision
+                             Azure Postgresql native Service!</span>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <input type="hidden" id="lot-id">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Canel</button>
+            <button type="button" class="btn btn-danger waves-effect waves-light save-category" data-dismiss="modal" ng-click="azureprovision()">Proceed</button>
+        </div>
+        </div>
+    </div>
+    </div>
+    <!-- end Modal Azure  -->
+
     <!-- Modal Release Battalion -->
     <div class="modal fade none-border" id="system-modal">
     <div class="modal-dialog">
@@ -316,19 +365,9 @@
                     <h2><span id="lot-name"></span></h4>
                     <div class="card-content">
                         <h5><i class="fa fa-check text-info"></i> You have {{systems.length}} pod[s] running!</h5>
-                        <table class="grid">
-                        <tr>
-                            <td ng-repeat="system in systems" class="pod" style="width: 100px;">   
-                            </td>
-                        </tr>
-                        <tr>
-                            <td ng-repeat="system in systems" class="notification-text" style="width: 100px;"> 
-                                {{system.metadata.name}}
-                            </td>
-                        </tr>
-                        
-                        </table>
-
+                        <div class="pod">
+                            {{systems.length}}
+                        </div>
                     </div>
                 </div>
                 </div>
@@ -369,8 +408,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-
-    <!-- <script type="text/javascript" src="assets/js/fence.js"></script> -->
     
     <script type="text/javascript"> 
         var distance;
@@ -473,16 +510,46 @@
                 _refreshPageData(2)
             }
 
+            $scope.azure = function(battalion){
+                $scope.currentBattalion = battalion.battalion;
+                $('#azure-modal').modal('show');
+            }
+
+            
+            $scope.azureprovision = function(){
+                var method = "POST";
+                var url = 'http://{composite}/battalion/azure';
+                var data = {  "battalion" : $scope.currentBattalion.description, "action" : "deploy" } ;
+                $("#success-alert-" + $scope.currentBattalion.id).show();
+                $http({
+                    method: method,
+                    url: url,
+                    data: angular.toJson(data),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin' : '*'
+                    }
+                }).then(function successCallback(response) {
+                    $("#success-alert-" + $scope.currentBattalion.id).fadeTo(2000, 500).slideUp(500, function(){
+                        $("#success-alert-" + $scope.currentBattalion.id).slideUp(500);
+                    });
+                }, function errorCallback(response) {
+            
+                });
+            }
+
             $scope.systemDetails = function(battalion){
+                //$('#system-modal').modal('show');
+                //return;
                 var method = "GET";
                 $scope.currentBattalion = battalion.battalion;
-                var url = 'https://api.cluster-zzmdz.dynamic.opentlc.com:6443/api/v1/namespaces/battalion-' + battalion.battalion.description + '/pods?labelSelector=app%3Dbattalion&limit=500';
+                var url = 'https://api.cluster-pv5p5.dynamic.redhatworkshops.io:6443/api/v1/namespaces/battalion-' + battalion.battalion.description + '/pods?limit=500';
                 $http({
                     method: method,
                     url: url,
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization' : 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6InQ2SnNCbHZmNElQZXNqVUpYcWJHX1BDSXJVQ0NSUjRNU1ZqV0VEUHVtbWsifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZW1vLWNpY2QiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiYmF0dGFsaW9uLXRva2VuLXB0ZDZjIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImJhdHRhbGlvbiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImUzMGJhNGUxLTljNGItNGIwOC04N2RlLTU3ODliZmFkNTRhZSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZW1vLWNpY2Q6YmF0dGFsaW9uIn0.Tjv_AUa9LBAoIr0sOOaO6w1wsHk-n0E9jppu7WVuPfobXyLAfJDutcfQZSdHdJcBvCzpjRcNrbkKdVZm0qryGUOJBwgT46voLhkt_GHKGkMG2g7wgzEWib7Vto-H8vs64azORLtyzWch51Bbejm_WnDJrWHkhCimVRnasDJ-TCP0leskSkUsQfr0gr-PfqnTvlbHfOatkG7B-934XNgMyqGmuamjBCo9M2uI7O29YHsY9xN6bsEdeaomEdItZ9UuE4gTovMXzhHPlK-2-98XtKQCEIHn-VJpeqa6EmrCrCY_HrVbE5jU3aUg8Bp2VexYmRkarjeKYv6EjCqbLo8sFgHMjtvoCHCOwDdw-DM6hbpH4kFRhx6lYInNH6UID-yr4JYvQpP7A8T3vhuMo5oTyXbF_20l_e45Giv7aS4zfJ9_rzqtuip7r3Ir8dnsBW-ngYnpuPPCeTjogJajCrxzSFWu_Yq-UU5YonVByaIFu9bGYr7ffZb5YJG7dvrDkguwmYvqZK1TYWos8a59uxRQaQPa_jaEGcn83iqiBdWGi9wIwruSc3qWZwQYyk0WsKu6fia2wuUDlsXxBRd0x3XQPxfiePiBhYFSJi6KvLB5AWo6IGqQiqergnv-H_DOZajjAdUywaU_tGZWgEXSYo014dIWwhSKAsZBbtyBSGS7tFo'
+                        'Authorization' : 'Bearer sha256~lkVXCdgGyM_0YT-i0OZffyEgfgj1UTMKy6fUyuYV0gc'
                     }
                 }).then(function successCallback(response) {
                    console.log(response.data);
@@ -520,7 +587,7 @@
                 });
             }
 
-             $scope.startSystem = function(equipment){                
+            $scope.startSystem = function(equipment){                
                 var method = "POST";
                 var url = 'http://{composite}/battalion/equipment';
                 $scope.currentBattalion = equipment.battalion;
@@ -543,6 +610,7 @@
                 
                 });
             }
+
 
             $scope.removeSystems = function(battalion){
                 var method = "POST";
