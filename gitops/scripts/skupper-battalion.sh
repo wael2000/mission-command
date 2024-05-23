@@ -1,3 +1,34 @@
+# DC
+skupper init --enable-console --enable-flow-collector --console-auth unsecured --site-name dc-site
+skupper token create aws_to_dc.token  
+
+#AWS
+skupper init --enable-console --enable-flow-collector --console-auth unsecured --site-name aws-site
+skupper link create aws_to_dc.token --name aws-to-dc
+
+# DC
+skupper service create postgresql 5432 --protocol tcp
+skupper service bind postgresql service postgresqldb
+
+#AWS
+skupper service bind postgresql service postgresqldb
+
+# every API component will access the DB next to it (least expensive route)
+# UI->dc-dc
+# UI->aws-aws
+
+# DC
+# unbind the service in DC to see the impact
+skupper service unbind postgresql service postgresqldb
+
+# API components in both sites will connect to DB on aws
+# UI->dc-aws
+# UI->aws-aws
+
+
+# =======================================
+
+
 oc project battalion-hauk
 skupper init --enable-console --enable-flow-collector --console-auth unsecured
 skupper token create aws_to_azure.token

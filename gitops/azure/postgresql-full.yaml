@@ -4,7 +4,7 @@ metadata:
   name: postgresqlserver-battalion
 spec:
   location: eastus
-  resourceGroup: openenv-kjkm7
+  resourceGroup: openenv-fxgmd
   serverVersion: "10"
   sslEnforcement: Enabled
   replicaProperties: {}
@@ -23,7 +23,7 @@ kind: PostgreSQLDatabase
 metadata:
   name: battalion
 spec:
-  resourceGroup: openenv-kjkm7
+  resourceGroup: openenv-fxgmd
   server: postgresqlserver-battalion
 ---
 apiVersion: azure.microsoft.com/v1alpha1
@@ -31,7 +31,7 @@ kind: PostgreSQLFirewallRule
 metadata:
   name: postgresqlfirewallrule-battalion
 spec:
-  resourceGroup: openenv-kjkm7
+  resourceGroup: openenv-fxgmd
   server: postgresqlserver-battalion
   startIpAddress: 0.0.0.0
   endIpAddress: 255.255.255.255

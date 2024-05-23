@@ -4655,6 +4655,15 @@ h6.h1 {
   padding-left: 50px;
 }
 
+.equipment-enable{
+  background: url("../images/icons/on-small.png") no-repeat;
+  width: 50px;
+  height: 49px;
+  margin: 4px;
+  padding-top: 15px;
+  padding-left: 50px;
+}
+
 .Fixed-Wing{
   background: url("../images/equipments/Fixed-Wing.png") no-repeat;
   background-size: 50px;
@@ -4766,7 +4775,6 @@ h6.h1 {
 }
 
 .azure-psql-connect{
-  
   border-radius: 5px;
   border-style: dotted;
   cursor: pointer;
