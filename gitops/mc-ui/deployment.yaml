@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: mc-ui
-          image: 'image-registry.openshift-image-registry.svc:5000/openshift/mc-ui:latest'
+          image: 'quay.io/wael2000/mc-ui:latest'
           ports:
             - containerPort: 8080
               protocol: TCP
@@ -40,3 +40,37 @@ spec:
       maxSurge: 25%
   revisionHistoryLimit: 10
   progressDeadlineSeconds: 600
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: mc-ui
+  labels:
+    app: mc-ui
+spec:
+  ipFamilies:
+    - IPv4
+  ports:
+    - name: 8080-tcp
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  internalTrafficPolicy: Cluster
+  type: ClusterIP
+  ipFamilyPolicy: SingleStack
+  sessionAffinity: None
+  selector:
+    app: mc-ui
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: mc-ui-route
+  labels:
+    app: mc-ui
+spec:
+  to:
+    kind: Service
+    name: mc-ui
+  port:
+    targetPort: 8080-tcp

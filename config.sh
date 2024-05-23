@@ -2,6 +2,10 @@ oc adm groups new cluster-admins
 oc adm policy add-cluster-role-to-group cluster-admin cluster-admins
 oc adm groups add-users cluster-admins admin
 
+oc policy add-role-to-user admin system:serviceaccount:mc-datacenter:pipeline -n openshift-gitops
+
+
+
 # create ocp-admins group
 oc adm groups new ocp-admins
 
