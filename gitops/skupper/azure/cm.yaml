@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: skupper-site
+data:
+  name: azure-site
+  console: "true"
+  flow-collector: "true"
+  console-authentication: unsecured

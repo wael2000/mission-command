@@ -133,7 +133,7 @@ public class BattalionController {
             azurePipelineProxyService.deploy(payload);
             payload.put("status","deployed");
         }
-        return service.deployOnAzure(Long.parseLong(system.get("battalion")));
+        return service.deployOnAzure(system.get("battalion"));
     }
 
 

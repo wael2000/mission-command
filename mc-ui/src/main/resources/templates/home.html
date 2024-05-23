@@ -258,16 +258,18 @@
                                 <span class="btn btn-success badge" ng-click="build(this)"> Build </span>
 
                                 <div class="row" ng-if="(battalion.systemStatus=='on' && battalion.azure==false)"> 
-                                    <div  ng-click="azure(this)" class="col-11 azure-psql">
+                                    <div  ng-click="azure(this)" class="col-10 azure-psql">
                                         Azure native service
                                     </div>
                                 </div>
                                 <div class="row" ng-if="(battalion.azure==true)"> 
-                                    <div ng-if="(battalion.systemStatus=='on')" ng-click="azure(this)" class="col-11 azure-psql">
-                                        Azure native service is deployed
+                                    <div ng-if="(battalion.azure==true)" class="col-4 azure-psql-deployed">
+                                        On
+                                    </div>
+                                    <div ng-if="(battalion.systemStatus=='on')" class="col-6 azure-psql-connect">
+                                        Connect
                                     </div>
                                 </div>
-                                
 
                                 <span class="alert-success hidden" id="build-alert-{{battalion.id}}">
                                     Build has started!
@@ -610,7 +612,6 @@
                 
                 });
             }
-
 
             $scope.removeSystems = function(battalion){
                 var method = "POST";

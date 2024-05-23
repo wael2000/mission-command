@@ -16,6 +16,7 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import org.jboss.logging.Logger;
+import org.redhat.model.Battalion;
 import org.redhat.services.BattalionService;
 
 import io.quarkus.scheduler.Scheduled;
@@ -32,7 +33,7 @@ public class NotificationController {
 
     Map<Long, Session> sessions = new ConcurrentHashMap<>();
     
-    Map<Long, String> systems = new HashMap<>();
+    Map<Long, Battalion> systems = new HashMap<>();
     Map<Long, Map<String,String>> equipments = new HashMap<>();
 
     @OnOpen
@@ -58,17 +59,21 @@ public class NotificationController {
     }*/
 
     
-    @Scheduled(every="20s") 
+    @Scheduled(every="10s") 
     void broadcast() {
         // get System Status update
-        Map<Long, String> updatedSystems = service.findSystemStatusByIds(sessions.keySet());
+        Map<Long, Battalion> updatedSystems = service.findSystemStatusByIds(sessions.keySet());
         if(systems.size()==0)
             systems.putAll(updatedSystems);
         else {
             updatedSystems.keySet().forEach( k -> {
-                if(!updatedSystems.get(k).equals(systems.get(k))) {
+                String systemStatus = systems.get(k).getSystemStatus();
+                String updatedSystemStatus = updatedSystems.get(k).getSystemStatus();
+                boolean azureStatus = systems.get(k).isAzure();
+                boolean updatedAzureStatus = updatedSystems.get(k).isAzure();
+                if(!updatedSystemStatus.equals(systemStatus) || updatedAzureStatus!=azureStatus) {
                     systems.put(k, updatedSystems.get(k));
-                    String message = "b," + k + "," + updatedSystems.get(k);
+                    String message = "b," + k + "," + updatedSystemStatus + "," + updatedAzureStatus;
                     sessions.get(k).getAsyncRemote().sendObject(message, result -> {
                     if (result.getException() != null) {
                         System.out.println("Unable to send message: " + result.getException());

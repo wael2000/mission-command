@@ -65,8 +65,8 @@ public class BattalionService {
                 .getResultList().toArray(new Battalion[0]);
     }
 
-    public Map<Long, String> findSystemStatusByIds(Set<Long> ids){
-        Map<Long, String> systems = new HashMap<>();
+    public Map<Long, Battalion> findSystemStatusByIds(Set<Long> ids){
+        Map<Long, Battalion> systems = new HashMap<>();
         Battalion[] battalions = em.createNamedQuery("Battalion.findSystemStatusByIds", Battalion.class)
                 .setParameter("ids",ids)
                 .getResultList().toArray(new Battalion[0]);
@@ -84,8 +84,9 @@ public class BattalionService {
         return Battalion.findById(id);
     }
 
-    public Battalion deployOnAzure(long id){
-        Battalion battalion = Battalion.findById(id);
+    @Transactional 
+    public Battalion deployOnAzure(String description){
+        Battalion battalion = Battalion.findByDescription(description);
         battalion.setAzure(true);
         em.persist(battalion);
         return battalion;
