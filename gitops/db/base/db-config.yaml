@@ -32,6 +32,7 @@ data:
         status varchar(255),
         systemMode varchar(255),
         systemStatus varchar(255),
+        azure boolean,
         primary key (id)
     );
     

@@ -42,6 +42,10 @@ oc adm policy \
 oc policy add-role-to-user admin system:serviceaccount:mc-datacenter:pipeline
 
 
+
+export TESTCONTAINERS_RYUK_DISABLED=true
+# https://quarkus.io/blog/quarkus-devservices-testcontainers-podman/
+
 curl -XPOST -k -d '{"id" : "1", "systemStatus" : "on"}' https://mission-command-service-command-post.apps.cluster-fdbd4.dynamic.opentlc.com/battalion/system  -H 'Content-Type: application/json' -v
 
 
