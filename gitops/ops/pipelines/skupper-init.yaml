@@ -1,0 +1,57 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: skupper-init
+spec:
+  params:
+    - default: fox-team
+      description: battalion name
+      name: battalion
+      type: string
+    - default: dc
+      name: location
+      type: string
+    - default: deploy
+      name: action
+      type: string
+  tasks:
+    - name: install-skupper
+      params:
+        - name: SCRIPT
+          value: >-
+            oc create configmap skupper-site
+            --from-literal=name=$(params.location)-site
+            --from-literal=console=true --from-literal=flow-collector=true
+            --from-literal=console-authentication=unsecured -n
+            battalion-$(params.battalion)
+        - name: VERSION
+          value: latest
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      when:
+        - input: $(params.action)
+          operator: in
+          values:
+            - deploy
+      workspaces:
+        - name: manifest-dir
+          workspace: source
+    - name: remove-skupper
+      params:
+        - name: SCRIPT
+          value: oc delete configmap skupper-site -n battalion-$(params.battalion)
+        - name: VERSION
+          value: latest
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      when:
+        - input: $(params.action)
+          operator: in
+          values:
+            - remove
+  workspaces:
+    - name: source
+      optional: false
+  finally: []

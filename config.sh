@@ -1,25 +1,13 @@
+# argocd 
 oc adm groups new cluster-admins
 oc adm policy add-cluster-role-to-group cluster-admin cluster-admins
 oc adm groups add-users cluster-admins admin
+oc label ns mc-datacenter argocd.argoproj.io/managed-by=demo-cicd --overwrite
 
+#pipeline
 oc policy add-role-to-user admin system:serviceaccount:mc-datacenter:pipeline -n openshift-gitops
 
-
-
-# create ocp-admins group
-oc adm groups new ocp-admins
-
-# give cluster admin rightsto ocp-admins group
-oc adm policy add-cluster-role-to-group cluster-admin ocp-admins
-
-# add username to ocp-admins group
-oc adm groups add-users ocp-admins admin
-
-# add label to the ns refer to ArgoCD ns
-oc label ns command-post argocd.argoproj.io/managed-by=demo-cicd --overwrite
-
-
-3 - lift pipeline permission up 
+# lift pipeline permission up 
 # create a new cluster role 
 
 apiVersion: rbac.authorization.k8s.io/v1
@@ -43,11 +31,11 @@ oc adm policy \
     system:serviceaccount:mc-datacenter:pipeline
 
 
-oc policy add-role-to-user admin system:serviceaccount:mc-datacenter:pipeline
 
 
-
+#podman with quarkus fix
 export TESTCONTAINERS_RYUK_DISABLED=true
+
 # https://quarkus.io/blog/quarkus-devservices-testcontainers-podman/
 
 curl -XPOST -k -d '{"id" : "1", "systemStatus" : "on"}' https://mission-command-service-command-post.apps.cluster-fdbd4.dynamic.opentlc.com/battalion/system  -H 'Content-Type: application/json' -v
@@ -58,3 +46,17 @@ curl -XPOST -k -d '{"id" : "1", "systemStatus" : "off"}' https://mission-command
 
 
 
+
+
+
+# create ocp-admins group
+oc adm groups new ocp-admins
+
+# give cluster admin rightsto ocp-admins group
+oc adm policy add-cluster-role-to-group cluster-admin ocp-admins
+
+# add username to ocp-admins group
+oc adm groups add-users ocp-admins admin
+
+# add label to the ns refer to ArgoCD ns
+oc label ns command-post argocd.argoproj.io/managed-by=demo-cicd --overwrite
