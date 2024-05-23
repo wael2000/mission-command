@@ -71,7 +71,7 @@ public class BattalionService {
                 .setParameter("ids",ids)
                 .getResultList().toArray(new Battalion[0]);
         for (int i = 0; i < battalions.length; i++) {
-            systems.put(battalions[i].id,battalions[i].getSystemStatus());
+            systems.put(battalions[i].id,battalions[i]);
         }
         return systems ;
     }
