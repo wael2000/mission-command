@@ -5,4 +5,3 @@ metadata:
 spec:
   type: ExternalName
   externalName: postgresqlserver-battalion.postgres.database.azure.com
-selector: {}
