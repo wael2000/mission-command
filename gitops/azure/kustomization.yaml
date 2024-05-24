@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
 - postgresql-full.yaml
 - db-azure-config.yaml
+- service.yaml
