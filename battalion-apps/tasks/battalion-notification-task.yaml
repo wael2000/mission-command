@@ -5,16 +5,13 @@ metadata:
 spec:
   description: Send status to Battalion backend
   params:
-    - default: '0'
-      description: battalion id
-      name: battalion_id
+    - default: 'fox-team'
+      description: battalion
+      name: battalion
       type: string
-    - name: system
+    - name: notification_url
       type: string
-      default: on
-    - name: battalion_url
-      type: string
-      default: "https://mission-command-command-post.apps.cluster-zzmdz.dynamic.opentlc.com/battalion/system"
+      default: "http://mc-mc-datacenter.apps.cluster-gg776.gg776.sandbox2839.opentlc.com/battalion/system"
   workspaces:
     - name: workspace
   steps:
@@ -23,4 +20,4 @@ spec:
       script: |
         #!/usr/bin/env bash
 
-        curl -XPOST -d '{"id": "$(params.battalion_id)", "systemStatus" : "$(params.system)"}' $(params.battalion_url) -H 'Content-Type: application/json'
+        curl -XPOST -d '{"description": "$(params.battalion)", "systemStatus" : "on"}' $(params.notification_url) -H 'Content-Type: application/json'

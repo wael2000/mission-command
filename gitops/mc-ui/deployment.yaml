@@ -27,7 +27,7 @@ spec:
             - name: ocp.api.url
               value: 'https://api.cluster-f44mq.dynamic.redhatworkshops.io:6443'
           resources: {}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
       dnsPolicy: ClusterFirst

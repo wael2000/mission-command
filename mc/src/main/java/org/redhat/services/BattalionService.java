@@ -38,7 +38,8 @@ public class BattalionService {
 
     @Transactional 
     public Battalion setSystemStatus(Battalion battalion){
-        Battalion bat = Battalion.findById(battalion.id);
+        //Battalion bat = Battalion.findById(battalion.id);
+        Battalion bat = Battalion.findByDescription(battalion.getDescription());
         bat.setSystemStatus(battalion.getSystemStatus());
         em.persist(bat);
         return bat;
