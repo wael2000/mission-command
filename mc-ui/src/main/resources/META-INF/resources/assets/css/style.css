@@ -4744,17 +4744,17 @@ h6.h1 {
 
 
 .azure-psql{
-  color: white;
+  color: #a00;
   border-radius: 5px;
   border-style: dotted;
   cursor: pointer;
-  padding-top: 10px;
-  text-align: right;
+  padding-top: 7px;
+  text-align: center;
   font-size: 12px;
   height: 45px;
   margin-top: 10px;
   margin-left: 10px;
-  background: url("../images/azure-psql.png") no-repeat, #b00;
+  background: url("../images/azure-psql.png") no-repeat;
   background-size: 35px;
   background-position-y: center;
   background-position-x: 5px;
@@ -4762,14 +4762,15 @@ h6.h1 {
 
 .azure-psql-deployed{
   border-radius: 5px;
+  color: #0a0;
   border-style: dotted;
-  padding-top: 10px;
-  text-align: right;
+  padding-top: 7px;
+  text-align: center;
   font-size: 12px;
   height: 45px;
   margin-top: 10px;
   margin-left: 10px;
-  background: url("../images/azure-psql.png") no-repeat;
+  background: url("../images/azure-connect.png") no-repeat;
   background-position-y: center;
   background-position-x: 5px;
 }
@@ -4779,7 +4780,7 @@ h6.h1 {
   border-style: dotted;
   cursor: pointer;
   padding-top: 10px;
-  text-align: right;
+  text-align: center;
   font-size: 12px;
   height: 45px;
   margin-top: 10px;

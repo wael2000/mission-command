@@ -52,17 +52,33 @@ public class NotificationController {
         LOG.error("onError", throwable);
     }
 
+
     /* 
     @OnMessage
     public void onMessage(String message, @PathParam("battalion") String battalion) {
         broadcast();
     }*/
-
     
-    @Scheduled(every="10s") 
+    @Scheduled(every="50s") 
+    void ping() {
+        sessions.keySet().forEach( k -> {
+        System.out.println("ping->" + k );
+        sessions.get(k).getAsyncRemote().sendObject("ping", result -> {
+            if (result.getException() != null) {
+                System.out.println("Unable to send message: " + result.getException());
+            }
+            });
+        });
+    }
+    
+    @Scheduled(every="20s") 
     void broadcast() {
         // get System Status update
         Map<Long, Battalion> updatedSystems = service.findSystemStatusByIds(sessions.keySet());
+        System.out.println("==============");
+        System.out.println("systems: " + systems.size());
+        System.out.println("sessions: " + sessions.size());
+        System.out.println("updatedSystems: " + updatedSystems.size());
         if(systems.size()==0)
             systems.putAll(updatedSystems);
         else {
@@ -74,6 +90,7 @@ public class NotificationController {
                 if(!updatedSystemStatus.equals(systemStatus) || updatedAzureStatus!=azureStatus) {
                     systems.put(k, updatedSystems.get(k));
                     String message = "b," + k + "," + updatedSystemStatus + "," + updatedAzureStatus;
+                    System.out.println("b-message: " + message);
                     sessions.get(k).getAsyncRemote().sendObject(message, result -> {
                     if (result.getException() != null) {
                         System.out.println("Unable to send message: " + result.getException());
@@ -88,6 +105,7 @@ public class NotificationController {
                     dbequipmentMap.keySet().forEach(equipmentK -> {
                         if(!dbequipmentMap.get(equipmentK).equals(currentequipmentMap.get(equipmentK))){
                             String message = "e," + equipmentK + "," + dbequipmentMap.get(equipmentK);
+                            System.out.println("e-message: " + message);
                             sessions.get(k).getAsyncRemote().sendObject(message, result -> {
                                 if (result.getException() != null) {
                                     System.out.println("Unable to send message: " + result.getException());

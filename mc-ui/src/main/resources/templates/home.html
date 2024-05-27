@@ -255,20 +255,24 @@
                                         </div>
                                     </div>
                                 </div>
-                                <span class="btn btn-success badge" ng-click="build(this)"> Build </span>
+                                <!-- <span class="btn btn-success badge" ng-click="build(this)"> Build </span> -->
 
                                 <div class="row" ng-if="(battalion.systemStatus=='on' && battalion.azure==false)"> 
-                                    <div  ng-click="azure(this)" class="col-10 azure-psql">
-                                        Azure native service
+                                    <div  ng-click="azure(this)" class="col-10 azure-psql ">
+                                        <img src="assets/images/icons/off.png"/>
+                                        Azure Psql
                                     </div>
                                 </div>
-                                <div class="row" ng-if="(battalion.azure==true)"> 
-                                    <div ng-if="(battalion.azure==true)" class="col-4 azure-psql-deployed">
-                                        On
+                                <div class="row" ng-if="(battalion.azure==true)">
+                                    <div ng-if="(battalion.azure==true)" class="col-10 azure-psql-deployed">
+                                        <img src="assets/images/icons/on-small.png"/>
+                                        Azure Psql
                                     </div>
+                                    <!--
                                     <div ng-if="(battalion.systemStatus=='on')" class="col-6 azure-psql-connect">
                                         Connect
                                     </div>
+                                    -->
                                 </div>
 
                                 <span class="alert-success hidden" id="build-alert-{{battalion.id}}">
@@ -735,7 +739,8 @@
                 };
                 socket.onmessage =function(m) {
                     console.log("Got message: " + m.data);
-                    
+                    if(m.data=='ping')
+                        return;
                     const tokens = m.data.split(',');
                     if(tokens[0]=="b" || tokens[0]=="e") {
                         $scope.battalions.forEach((battalion) => {
@@ -747,9 +752,10 @@
                         $("#td-b-"+tokens[1]).attr('class', 'card-' + tokens[1]);
                         $("#td-s-"+tokens[1]).text(tokens[1]);
                         $("#div-loading-"+tokens[1]).hide();
+
+                        _refreshPageData(global_mode,global_parameter);
+                        $scope.currentBattalion = null;
                     }
-                    _refreshPageData(global_mode,global_parameter);
-                    $scope.currentBattalion = null;
 
                 };
             }   
