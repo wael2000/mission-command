@@ -6,7 +6,7 @@ metadata:
     app: apis
     app.kubernetes.io/part-of: system
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: apis
