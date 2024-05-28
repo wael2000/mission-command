@@ -60,3 +60,7 @@ oc adm groups add-users ocp-admins admin
 
 # add label to the ns refer to ArgoCD ns
 oc label ns command-post argocd.argoproj.io/managed-by=demo-cicd --overwrite
+
+
+
+curl -XPOST -k -d '{"altitude":1.19, "latitude":1.15,"longitude":1.11}' http://mc-mc-datacenter.apps.cluster-gg776.gg776.sandbox2839.opentlc.com/battalion/location/1 -H 'Content-Type: application/json' -v

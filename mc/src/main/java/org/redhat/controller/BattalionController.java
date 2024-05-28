@@ -180,8 +180,9 @@ public class BattalionController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
     public void updateBattalionLocation(@PathParam int id, Coordinates coordinates) {
+        System.out.println(id);
+        System.out.println(coordinates);
         service.updateBattalionLocation(id, coordinates);
-
     }
     
     private static Map<String, String> parseQueryString(String query) {

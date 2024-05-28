@@ -87,7 +87,13 @@ public class NotificationController {
                 String updatedSystemStatus = updatedSystems.get(k).getSystemStatus();
                 boolean azureStatus = systems.get(k).isAzure();
                 boolean updatedAzureStatus = updatedSystems.get(k).isAzure();
-                if(!updatedSystemStatus.equals(systemStatus) || updatedAzureStatus!=azureStatus) {
+                double latitude = systems.get(k).getLatitude();
+                double longitude = systems.get(k).getLongitude();
+                double updatedLatitude = updatedSystems.get(k).getLatitude();
+                double updatedLongitude = updatedSystems.get(k).getLongitude();
+
+                if(!updatedSystemStatus.equals(systemStatus) || updatedAzureStatus!=azureStatus
+                   || latitude!=updatedLatitude || longitude!=updatedLongitude ) {
                     systems.put(k, updatedSystems.get(k));
                     String message = "b," + k + "," + updatedSystemStatus + "," + updatedAzureStatus;
                     System.out.println("b-message: " + message);
