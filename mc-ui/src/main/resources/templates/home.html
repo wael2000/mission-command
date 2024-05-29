@@ -577,13 +577,13 @@
                 //return;
                 var method = "GET";
                 $scope.currentBattalion = battalion.battalion;
-                var url = 'https://api.cluster-pv5p5.dynamic.redhatworkshops.io:6443/api/v1/namespaces/battalion-' + battalion.battalion.description + '/pods?limit=500';
+                var url = 'https://api.cluster-gg776.gg776.sandbox2839.opentlc.com:6443/api/v1/namespaces/battalion-' + battalion.battalion.description + '/pods?limit=500';
                 $http({
                     method: method,
                     url: url,
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization' : 'Bearer sha256~lkVXCdgGyM_0YT-i0OZffyEgfgj1UTMKy6fUyuYV0gc'
+                        'Authorization' : 'Bearer sha256~a1WtQClDuWE08xuHAurjVzyJz8RvfYrGg5zGu5OGgKI'
                     }
                 }).then(function successCallback(response) {
                    console.log(response.data);

@@ -8,3 +8,13 @@ configMapGenerator:
   literals:
   - battalion_id=1
   - battalion=fox
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/replicas
+      value: 2      
+  target:
+    group: apps
+    kind: Deployment
+    name: apis
+    version: v1  
