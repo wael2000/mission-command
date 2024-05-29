@@ -26,7 +26,7 @@ spec:
           name: 'postgresql:10-el8'
         lastTriggeredImage: 'image-registry.openshift-image-registry.svc:5000/openshift/postgresql@sha256:b85b29c18c1a61fef60e3bb7f8ff026639d99ac353b933fe4889753056e0a732'
     - type: ConfigChange
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 10
   test: false
   selector:
