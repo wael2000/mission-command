@@ -11,7 +11,31 @@ AZURE_UID=admin
 AZURE_PWD=OTAwMTc1
 
 
-# A hello world bash function
+declare -A menu_array
+#menu_array=( ["1"]="1) init" ["woof"]="dog")
+#menu_array+=(["1"]="1) init")
+#menu_array=(["1"]="\033[43m1)\033[0m init")
+
+menu_array["1"]="1) init"
+menu_array["2"]="2) init"
+menu_array["3"]="3) init"
+menu_array["4"]="4) init"
+menu_array["5"]="5) bind service"
+menu_array["6"]="6) bind service"
+menu_array["7"]="7) bind service"
+menu_array["8"]="8) bind service"
+menu_array["9"]="9) unbind service"
+menu_array["10"]="10) unbind service"
+menu_array["11"]="11) unbind service"
+menu_array["12"]="12) unbind service"
+
+# Function to check if an array contains an item
+highlight() {
+  return "\033[43m$1\033[0m"
+}
+
+
+# A menu bash function
 menu () {
   # https://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=Connect
 clear
@@ -28,15 +52,15 @@ echo " | ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝�
 echo " +................................................................+.................................+"
 echo " | DC                       | AWS                     | Azure                 | Azure Native        |"
 echo " +..................................................................................................+"
-echo " | 1) init                  | 2) init                 | 3) init               | 4) init             |"
-echo " | 5) bind service          | 6) bind service         | 7) bind service       | 8) bind service     |"
-echo " | 9) unbind service        | 10) unbind service      | 11) unbind service    | 12) unbind service  |" 
+echo " | ${menu_array[1]}                  | ${menu_array[2]}                 | ${menu_array[3]}               | ${menu_array[4]}             |"
+echo " | ${menu_array[5]}          | ${menu_array[6]}         | ${menu_array[7]}       | ${menu_array[8]}     |"
+echo " | ${menu_array[9]}        | ${menu_array[10]}      | ${menu_array[11]}    | ${menu_array[12]}  |" 
 echo " +..................................................................................................+"
 echo " |  █████████ l) link All ████████████ e) expose db service █████████████ d) delete all ██████████  |"
 echo " +..................................................................................................+"
-
 if [ "$1" = "done" ]; then
-echo " step $2 ==> $1 "
+echo " |\033[43mstep $2 ==> $1\033[0m                                                                                   |"
+echo " +..................................................................................................+"
 fi
 }
 
@@ -54,6 +78,7 @@ skupper init --enable-console --enable-flow-collector --console-auth unsecured -
 skupper token create aws_to_dc.token 
 skupper token create azure_to_dc.token
 skupper token create azure_native_to_dc.token
+menu_array["1"]="\033[43m1) init\033[0m"
 ;;
 
 "2")
@@ -61,6 +86,7 @@ skupper token create azure_native_to_dc.token
 oc login --server=$AWS_URL -u $AWS_UID -p $AWS_PWD --insecure-skip-tls-verify=true
 oc project battalion-fox-team
 skupper init --enable-console --enable-flow-collector --console-auth unsecured --site-name aws-site
+menu_array["2"]="\033[43m2) init\033[0m"
 ;;
 
 "3")
@@ -68,6 +94,7 @@ skupper init --enable-console --enable-flow-collector --console-auth unsecured -
 oc login --server=$AZURE_URL -u $AZURE_UID -p $AZURE_PWD --insecure-skip-tls-verify=true
 oc project battalion-fox-team
 skupper init --enable-console --enable-flow-collector --console-auth unsecured --site-name azure-site
+menu_array["3"]="\033[43m3) init\033[0m"
 ;;
 
 "4")
@@ -75,6 +102,7 @@ skupper init --enable-console --enable-flow-collector --console-auth unsecured -
 oc login --server=$DC_URL -u $DC_UID -p $DC_PWD --insecure-skip-tls-verify=true
 oc project battalion-fox-team-azure
 skupper init --enable-console --enable-flow-collector --console-auth unsecured --site-name azure-native-site
+menu_array["4"]="\033[43m4) init\033[0m"
 ;;
 
 
@@ -83,6 +111,8 @@ skupper init --enable-console --enable-flow-collector --console-auth unsecured -
 oc login --server=$DC_URL -u $DC_UID -p $DC_PWD --insecure-skip-tls-verify=true
 oc project battalion-fox-team
 skupper service bind postgresql service postgresqldb
+menu_array["5"]="\033[43m5) bind service\033[0m"
+menu_array["9"]="9) unbind service"
 ;;
 
 "6")
@@ -90,6 +120,8 @@ skupper service bind postgresql service postgresqldb
 oc login --server=$AWS_URL -u $AWS_UID -p $AWS_PWD --insecure-skip-tls-verify=true
 oc project battalion-fox-team
 skupper service bind postgresql service postgresqldb
+menu_array["6"]="\033[43m6) bind service\033[0m"
+menu_array["10"]="10) unbind service"
 ;;
 
 "7")
@@ -97,6 +129,8 @@ skupper service bind postgresql service postgresqldb
 oc login --server=$AZURE_URL -u $AZURE_UID -p $AZURE_PWD --insecure-skip-tls-verify=true
 oc project battalion-fox-team
 skupper service bind postgresql service postgresqldb
+menu_array["7"]="\033[43m7) bind service\033[0m"
+menu_array["11"]="11) unbind service"
 ;;
 
 "8")
@@ -104,6 +138,8 @@ skupper service bind postgresql service postgresqldb
 oc login --server=$DC_URL -u $DC_UID -p $DC_PWD --insecure-skip-tls-verify=true
 oc project battalion-fox-team-azure
 skupper service bind postgresql service azure-postgresql-service
+menu_array["8"]="\033[43m8) bind service\033[0m"
+menu_array["12"]="12) unbind service"
 ;;
 
 
@@ -114,6 +150,8 @@ skupper service bind postgresql service azure-postgresql-service
 oc login --server=$DC_URL -u $DC_UID -p $DC_PWD --insecure-skip-tls-verify=true
 oc project battalion-fox-team
 skupper service unbind postgresql service postgresqldb
+menu_array["9"]="\033[43m9) unbind service\033[0m"
+menu_array["5"]="5) bind service"
 ;;
 
 "10")
@@ -121,6 +159,8 @@ skupper service unbind postgresql service postgresqldb
 oc login --server=$AWS_URL -u $AWS_UID -p $AWS_PWD --insecure-skip-tls-verify=true
 oc project battalion-fox-team
 skupper service unbind postgresql service postgresqldb
+menu_array["10"]="\033[43m10) unbind service\033[0m"
+menu_array["6"]="6) bind service"
 ;;
 
 "11")
@@ -128,6 +168,8 @@ skupper service unbind postgresql service postgresqldb
 oc login --server=$AZURE_URL -u $AZURE_UID -p $AZURE_PWD --insecure-skip-tls-verify=true
 oc project battalion-fox-team
 skupper service unbind postgresql service postgresqldb
+menu_array["11"]="\033[43m11) unbind service\033[0m"
+menu_array["7"]="7) bind service"
 ;;
 
 "12")
@@ -135,9 +177,9 @@ skupper service unbind postgresql service postgresqldb
 oc login --server=$DC_URL -u $DC_UID -p $DC_PWD --insecure-skip-tls-verify=true
 oc project battalion-fox-team-azure
 skupper service unbind postgresql service azure-postgresql-service
+menu_array["12"]="\033[43m12) unbind service\033[0m"
+menu_array["8"]="8) bind service"
 ;;
-
-
 
 
 

@@ -31,6 +31,10 @@ spec:
               value: 'http://el-battalion-team-event-listener-mc-datacenter.apps.cluster-pv5p5.dynamic.redhatworkshops.io'
             - name: build.pipeline.el
               value: 'http://dummy'
+            - name: azure.pipeline.el
+              value: 'http://el-azure-event-listener-mc-datacenter.apps.cluster-gg776.gg776.sandbox2839.opentlc.com'
+            - name: ops.pipeline.el
+              value: 'http://el-battalion-ops-event-listener-mc-datacenter.apps.cluster-gg776.gg776.sandbox2839.opentlc.com'
           resources: {}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File

@@ -26,10 +26,14 @@
     <link href="assets/css/lib/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/lib/helper.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
+
+
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css' rel='stylesheet' />
 </head>
 
 <body ng-app="BattalionManagement" ng-controller="BattalionManagementController">
-
     <div class="content-wrap">
         <div class="container-fluid">
             <div class="row ">
@@ -200,8 +204,8 @@
                             <div class="card">                                
                                 <div class="stat-widget-one">
                                     <div class="stat-icon dib">
-                                        <i ng-if="(battalion.status=='static')" class="ti-map-alt"></i>
-                                        <i ng-if="(battalion.status=='deployed')" class="ti-direction-alt"></i>
+                                        <i ng-if="(battalion.status=='static')" ng-click="showmap(this)" class="ti-map-alt"></i>
+                                        <i ng-if="(battalion.status=='deployed')" ng-click="showmap(this)" class="ti-direction-alt"></i>
                                         <i ng-if="(battalion.status=='mobile')" class="ti-target"></i>
                                     </div>
 
@@ -351,6 +355,26 @@
     </div>
     </div>
     <!-- end Modal Azure  -->
+
+
+    <!-- Modal Map  -->
+    <div class="modal fade none-border" id="mymap">
+    <div class="modal-dialog" >
+        <div class="modal-content" style="height:600px; width:800px">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-lg-12">
+                <div id="map" style="top: 0; bottom: 0; width: 100%; height:500px"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+    </div>
+    <!-- end Modal MAp  -->
 
     <!-- Modal Release Battalion -->
     <div class="modal fade none-border" id="system-modal">
@@ -521,6 +545,10 @@
                 $('#azure-modal').modal('show');
             }
 
+            $scope.showmap = function(battalion){
+                $scope.currentBattalion = battalion.battalion;
+                $('#mymap').modal('show');
+            }
             
             $scope.azureprovision = function(){
                 var method = "POST";
@@ -752,9 +780,17 @@
                         $("#td-b-"+tokens[1]).attr('class', 'card-' + tokens[1]);
                         $("#td-s-"+tokens[1]).text(tokens[1]);
                         $("#div-loading-"+tokens[1]).hide();
-
+                        
                         _refreshPageData(global_mode,global_parameter);
                         $scope.currentBattalion = null;
+                    } else if(tokens[0]=="l" ){
+                        var lonlat = {"lon": tokens[2], "lat": tokens[3]};
+                        const markerLocation = [ tokens[2],  tokens[3] ]; // Marker coordinates [lng, lat]
+                        //marker.setLngLat(markerLocation);
+                        //map.setCenter(markerLocation);
+                        var marker1 = new mapboxgl.Marker().setLngLat(markerLocation).addTo(map);
+                        addNewLocation(markerLocation);
+                        
                     }
 
                 };
@@ -767,16 +803,79 @@
    
 
    
-
+    
     <script type="text/javascript"> 
+    var marker;
+    var map;
+    var source;
+    coordinates = [];
+
+    function addNewLocation(updatedCoordinates){
+        coordinates.push(updatedCoordinates)
+        // Add a line layer to render the line
+        map.getSource('line').setData({
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'LineString',
+                        'coordinates': coordinates
+                    }
+                });
+        //marker.setLngLat(updatedCoordinates);
+    }
+
+
     $( document ).ready(function() {
-        
-        
+        var latitude=51.7098069 , longitude=5.364971961, raduis=10; //KM
+        var initialCoordinates = [longitude, latitude];
+        coordinates.push(initialCoordinates);
+        mapboxgl.accessToken = 'pk.eyJ1Ijoid2FlbGVsZG9hbWlyeSIsImEiOiJjbHdxbm42MnQwNGJqMmpzYXQzMmlyNGc4In0.RhndpXBdgA_zrlyGOyGuLg';
+        map = new mapboxgl.Map({
+            container: 'map', // container ID
+            center: initialCoordinates, // starting position [lng, lat]
+            zoom: 12 // starting zoom
+        });
+        setTimeout(function() {
+             //map.resize();
+             //$('.modal-content').css('height', '505px');
+        }, 2000);
+        map.on('idle',function(){
+            //$('.mapboxgl-canvas').css('width', '100%');
+            //$('.mapboxgl-canvas').css('height', '500px');
+            //map.resize();
+        });
+        map.on('load', function() {
+            // Create a new marker.
+            //map.resize();
+            marker = new mapboxgl.Marker()
+                .setLngLat(initialCoordinates)
+                    .addTo(map);
 
-    }); 
+            source = map.addSource('line', {
+                'type': 'geojson',
+                'data': {
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'LineString',
+                        'coordinates': coordinates
+                    }
+                }
+            });
+            map.addLayer({
+                'id': 'lineLayer',
+                'type': 'line',
+                'source': 'line',
+                'layout': {},
+                'paint': {
+                    'line-color': '#000',
+                    'line-width': 3
+                }
+            });
 
+        });
      
+    }); 
     </script>
 
+    
 </body>
 </html>

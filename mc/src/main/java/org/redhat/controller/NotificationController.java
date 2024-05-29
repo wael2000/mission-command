@@ -71,7 +71,7 @@ public class NotificationController {
         });
     }
     
-    @Scheduled(every="20s") 
+    @Scheduled(every="10s") 
     void broadcast() {
         // get System Status update
         Map<Long, Battalion> updatedSystems = service.findSystemStatusByIds(sessions.keySet());
@@ -92,11 +92,20 @@ public class NotificationController {
                 double updatedLatitude = updatedSystems.get(k).getLatitude();
                 double updatedLongitude = updatedSystems.get(k).getLongitude();
 
-                if(!updatedSystemStatus.equals(systemStatus) || updatedAzureStatus!=azureStatus
-                   || latitude!=updatedLatitude || longitude!=updatedLongitude ) {
+                if(!updatedSystemStatus.equals(systemStatus) || updatedAzureStatus!=azureStatus) {
                     systems.put(k, updatedSystems.get(k));
                     String message = "b," + k + "," + updatedSystemStatus + "," + updatedAzureStatus;
                     System.out.println("b-message: " + message);
+                    sessions.get(k).getAsyncRemote().sendObject(message, result -> {
+                    if (result.getException() != null) {
+                        System.out.println("Unable to send message: " + result.getException());
+                    }
+                    });
+                }
+                if( latitude!=updatedLatitude || longitude!=updatedLongitude ) {
+                    systems.put(k, updatedSystems.get(k));
+                    String message = "l," + k + "," + updatedLatitude + "," + updatedLongitude;
+                    System.out.println("l-message: " + message);
                     sessions.get(k).getAsyncRemote().sendObject(message, result -> {
                     if (result.getException() != null) {
                         System.out.println("Unable to send message: " + result.getException());
