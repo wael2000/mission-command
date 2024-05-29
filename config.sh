@@ -2,7 +2,7 @@
 oc adm groups new cluster-admins
 oc adm policy add-cluster-role-to-group cluster-admin cluster-admins
 oc adm groups add-users cluster-admins admin
-oc label ns mc-datacenter argocd.argoproj.io/managed-by=demo-cicd --overwrite
+oc label ns mc-datacenter argocd.argoproj.io/managed-by=openshift-gitops --overwrite
 
 #pipeline
 oc policy add-role-to-user admin system:serviceaccount:mc-datacenter:pipeline -n openshift-gitops
